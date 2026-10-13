@@ -1,217 +1,220 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-th="s">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>教練預約</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500&family=DotGothic16&display=swap" rel="stylesheet">
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <style>
-:root{--bg:#f5f5f7;--card:#fff;--tx:#1d1d1f;--sub:#6e6e73;--ln:#e5e5ea;--ac:#0071e3;--ok:#34c759;--bad:#ff3b30}
-@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--tx:#f5f5f7;--sub:#98989d;--ln:#38383a;--ac:#2997ff}}
+:root{--bg:#f1e7d0;--tx:#2b2118;--sub:#8a7358;--ln:#d9cbb0;--ac:#2b2118;--on:#f1e7d0;--d:#c8372d;--b:#1d5c3a;--hl:#f7efdc;--ff:'Noto Sans TC',sans-serif;--fs:'Noto Serif TC',serif;--r:8px}
+[data-th=t]{--bg:#0b0b0b;--tx:#ffb000;--sub:#a87400;--ln:#3a2800;--ac:#ffb000;--on:#0b0b0b;--d:#ff5a3c;--b:#ffb000;--hl:#1a1200;--ff:'DotGothic16','Noto Sans TC',monospace;--fs:'DotGothic16','Noto Sans TC',monospace;--r:2px}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang TC","Noto Sans TC",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-main{max-width:560px;margin:0 auto;padding:16px}
-.top{display:flex;justify-content:space-between;align-items:center;margin:8px 0 14px}
-h1{font-size:28px;margin:0;font-weight:700;letter-spacing:-.02em}
-.link{background:none;border:0;color:var(--ac);font:inherit;font-size:15px;cursor:pointer;padding:6px 0}
-details.blk{background:var(--card);border-radius:16px;margin-bottom:12px;overflow:hidden}
-details.blk details.blk{background:var(--bg);border-radius:12px;margin:8px 0 0}
-summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(-45deg);transition:transform .2s;flex:none}
-details[open]>summary::after{transform:rotate(45deg)}
-summary small{color:var(--sub);font-weight:400;margin-left:auto}
-.bd{padding:0 16px 16px}
-.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--ln)}
-.row:first-child{border-top:0}
-.row span:first-child{color:var(--sub)}
-.sub{color:var(--sub);font-size:14px}
-input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--bg);color:var(--tx);margin:4px 0 10px}
-label{font-size:13px;color:var(--sub)}
-.btn{background:var(--ac);color:#fff;border:0;border-radius:12px;font:inherit;font-weight:600;padding:11px 16px;cursor:pointer;width:100%}
-.btn.s{width:auto;padding:6px 12px;font-size:14px;border-radius:999px}
-.btn.g{background:var(--bg);color:var(--ac)}
-.btn.r{background:var(--bg);color:var(--bad)}
-button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:12px}
-.pill{font-size:12px;padding:2px 8px;border-radius:99px;background:var(--bg);color:var(--sub)}
-.av{width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--ln)}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-a{color:var(--ac);text-decoration:none}
-.sw{display:flex;justify-content:space-between;align-items:center}
-.sw input{width:auto;margin:0}
-footer{margin:24px 0;text-align:center;font-size:13px;color:var(--sub)}
-.empty{color:var(--sub);padding:6px 0}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 var(--ff);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+[data-th=t] body{background-image:repeating-linear-gradient(0deg,rgba(255,176,0,.045) 0 1px,transparent 1px 3px)}
+[data-th=t] main{text-shadow:0 0 7px rgba(255,176,0,.45);letter-spacing:.03em}
+[data-th=t] .btn,[data-th=t] .tk .btn{text-shadow:none}
+main{max-width:560px;margin:0 auto;padding:44px 20px 24px}
+h1{font:900 34px var(--fs);margin:0 0 12px}[data-th=t] h1{font-weight:400}
+h4{margin:14px 0 6px;font:700 16px var(--fs)}
+details.blk{border-top:2px solid var(--tx)}details.blk details.blk{border-top:1px solid var(--ln)}
+summary{min-height:48px;display:flex;align-items:center;font:700 18px var(--fs);cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}summary small{font:500 14px var(--ff);margin-left:auto;margin-right:8px}
+summary::after{content:"›";font:400 22px var(--ff)}details[open]>summary::after{content:"˄"}
+.bd{padding:0 0 14px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--ln);font-size:14px}.row>span:first-child{color:var(--sub)}
+.sm2{font-size:13px;color:var(--sub)}
+input,select,textarea{width:100%;font:inherit;font-size:16px;padding:8px 2px;border:0;border-bottom:2px solid var(--tx);background:transparent;color:var(--tx);border-radius:0;margin:2px 0 10px}
+input[type=checkbox]{width:auto;margin:0 8px 0 0;accent-color:var(--ac)}
+textarea{border:2px solid var(--tx);border-radius:var(--r);padding:8px 10px}
+label{font-size:12px;color:var(--sub)}
+.btn{background:var(--ac);color:var(--on);border:0;border-radius:var(--r);font:700 16px var(--ff);min-height:48px;width:100%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.btn.s{width:auto;min-height:40px;padding:0 14px;font-size:14px;border-radius:99px}[data-th=t] .btn.s{border-radius:2px}
+.btn.g{background:none;color:var(--tx);border:2px solid var(--tx)}.btn.r{background:none;color:var(--d);border:2px solid var(--d)}
+.lk{background:none;border:0;color:var(--b);text-decoration:underline;text-underline-offset:4px;font:500 14px var(--ff);min-height:44px;cursor:pointer}
+.acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.big{font:900 32px var(--fs)}
+.tk{border:2px dashed var(--tx);border-radius:6px;padding:10px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px}.tm{width:86px}.ti{flex:1}.tk .acts{width:100%;justify-content:flex-start}
+[data-th=t] .so,[data-th=s] .to{display:none}
+.stp{display:inline-flex;width:28px;height:28px;border:2px solid;border-radius:50%;align-items:center;justify-content:center;font:900 15px var(--fs);flex:none}
+.stp.d{color:var(--d)}.stp.b{color:var(--b);opacity:.75}[data-th=t] .stp{border-radius:2px}
+.ph{display:flex;justify-content:space-between;margin-top:8px;font-size:14px}.ph b{font:700 18px var(--fs)}
+.cells{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:8px 0 14px}
+.cell{aspect-ratio:1;border:2px dashed #b9a98a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#b9a98a;font-size:14px}
+.cell.d{border:2px solid var(--d);color:var(--d);font:900 20px var(--fs);transform:rotate(-8deg)}.cell.d:nth-child(2n){transform:rotate(6deg)}
+.cell.b{border:2px solid var(--b);color:var(--b);opacity:.75;font:900 20px var(--fs);transform:rotate(-5deg)}
+[data-th=t] .cells{display:flex;flex-wrap:wrap;gap:6px;padding:0 4px}
+[data-th=t] .cell{aspect-ratio:auto;flex:1 0 calc(10% - 6px);height:28px;border-radius:0;border:1px solid var(--ac);color:transparent;transform:skewX(-15deg)!important}
+[data-th=t] .cell span{display:inline-block;transform:skewX(15deg)}
+[data-th=t] .cell.d{background:#5a3d00;border:0}[data-th=t] .cell.b{background:var(--ac);color:var(--on);opacity:.75;border:0;font-size:15px}
+.fl{position:relative;display:inline-block;width:56px;height:84px;line-height:84px;text-align:center;font-size:60px;background:#1a1200;border:1px solid #3a2800;margin-right:2px;border-radius:2px}
+.fl::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#0b0b0b}
+.co{display:inline-block;width:20px;text-align:center;font-size:60px;line-height:84px;vertical-align:top}
+.fl.sm{width:17px;height:30px;line-height:30px;font-size:22px}.co.sm{width:8px;font-size:22px;line-height:30px}
+.seg{display:flex;gap:8px;margin-bottom:8px}.seg button{flex:1;min-height:44px;border:2px solid var(--tx);border-radius:99px;background:none;color:var(--tx);font:700 16px var(--fs);cursor:pointer}
+.seg button.on{background:var(--ac);color:var(--on)}[data-th=t] .seg button{border-radius:2px}
+.nav{display:flex;justify-content:space-between;align-items:center}.nav b{font:900 20px var(--fs)}.nav button{width:44px;height:44px;background:none;border:0;color:var(--tx);font-size:26px;cursor:pointer}
+.wk,.mo{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0 12px}
+.wc{border:1px solid var(--ln);border-radius:6px;min-height:170px;padding:3px;display:flex;flex-direction:column;gap:4px;cursor:pointer;font-size:12px;text-align:center}
+.wc.td,.mc.td{border:2px solid var(--tx);background:var(--hl)}
+.chip{border:1.5px solid;border-radius:5px;font-size:10px;line-height:1.25;padding:2px 0}.chip.d{color:var(--d)}.chip.b{color:var(--b);opacity:.85}
+.mc{height:52px;border:1px solid var(--ln);border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px;font-size:12px;cursor:pointer}.mc.x{opacity:.4}.mc .stp{width:22px;height:22px;font-size:12px}
+.tcs{display:flex;gap:10px;margin-top:4px}.tc{flex:1;display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--ln);border-radius:var(--r);background:none;color:var(--tx);font:700 16px var(--fs);cursor:pointer}.tc.on{border:3px solid var(--tx);padding:8px}
+.sw{width:32px;height:32px;border-radius:6px;flex:none;border:1px solid;position:relative}
+.sw.s{background:#f1e7d1;border-color:#b9a98b}.sw.s::after{content:"";position:absolute;inset:7px;border:2px solid #c8372e;border-radius:50%}
+.sw.t{background:#0b0b0c;border-color:#5a3d01}.sw.t::after{content:"";position:absolute;inset:8px;background:#ffb001}
+.pls{display:flex;gap:6px}.pl{min-height:36px;padding:0 12px;border:2px solid var(--tx);border-radius:99px;background:none;color:var(--tx);font:500 13px var(--ff);cursor:pointer}.pl.on{background:var(--ac);color:var(--on)}[data-th=t] .pl{border-radius:2px}
+.av{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--tx);display:flex;align-items:center;justify-content:center;font:900 28px var(--fs);flex:none}
+.badge{border:2px solid var(--d);color:var(--d);border-radius:99px;padding:0 8px;font:900 13px var(--fs)}
+a{color:var(--b)}footer{margin:24px 0;text-align:center;font-size:13px;color:var(--sub)}.empty{color:var(--sub);padding:6px 0}
+#strip{display:none}
+[data-th=t] #strip{display:flex;position:fixed;top:calc(10px + env(safe-area-inset-top));left:20px;right:20px;max-width:520px;margin:0 auto;justify-content:space-between;font-size:11px;letter-spacing:.12em;color:var(--sub);border-bottom:1px solid var(--ln);padding-bottom:4px;z-index:2}
+.bl{font-style:normal;color:var(--tx);animation:bl 1.1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.bl{animation:none}}
 </style>
 </head>
 <body>
+<div id="strip"><span>▌COACH BOARD</span><span><i class="bl">●</i> LIVE</span></div>
+<main id="app"><p class="sm2" style="padding:40px 0;text-align:center">載入中…</p></main>
 <script>
-function __show(m){var a=document.getElementById("app");if(a)a.innerHTML='<div class="card"><h1>發生錯誤</h1><p class="sub" style="word-break:break-all">'+String(m).replace(/</g,"&lt;")+'</p></div>';}
-window.addEventListener("error",function(e){__show((e.message||"error")+" (line "+(e.lineno||"?")+")");});
-window.addEventListener("unhandledrejection",function(e){__show((e.reason&&e.reason.message)||e.reason);});
+function __show(m){var a=document.getElementById("app");if(a)a.innerHTML='<h1>發生錯誤</h1><p class="sm2" style="word-break:break-all">'+String(m).replace(/</g,"&lt;")+'</p>';}
+window.addEventListener("error",e=>__show((e.message||"error")+" (line "+(e.lineno||"?")+")"));
+window.addEventListener("unhandledrejection",e=>__show((e.reason&&e.reason.message)||e.reason));
 </script>
-<main id="app"><p class="sub" style="padding:40px 0;text-align:center">載入中…</p></main>
 <script>
-/* ===== 設定 ===== */
-const CONFIG = { LIFF_ID: "2011857437-xFUbKdAg" };  // 填入 LINE LIFF ID；留空 = 示範模式（資料存在本機瀏覽器）
-
-/* ===== 資料層：目前用 localStorage；正式上線請把 load/save 換成 Firebase / Supabase ===== */
-const blank = () => ({coach:null, students:{}, packages:[], lessons:[], requests:[], notes:[], cfg:{maxDays:30, place:""}});
-const store = {
-  load(){ try{ return JSON.parse(localStorage.getItem("cb_db")) || blank(); }catch(e){ return blank(); } },
-  save(db){ localStorage.setItem("cb_db", JSON.stringify(db)); }
-};
-let db = store.load(), S = {uid:null, coachMode:false, demo:!CONFIG.LIFF_ID};
-
-/* ===== 工具 ===== */
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
-const rid = () => Math.random().toString(36).slice(2, 10);
-const fmt = d => new Date(d).toLocaleString("zh-TW", {month:"numeric", day:"numeric", weekday:"short", hour:"2-digit", minute:"2-digit", hour12:false});
-const loc = d => { const o = new Date(d - d.getTimezoneOffset() * 6e4); return o.toISOString().slice(0, 16); };
-const gcal = l => { const z = x => new Date(x).toISOString().replace(/[-:]|\.\d{3}/g, "");
-  const e = new Date(+new Date(l.start) + 36e5);
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("教練課")}&dates=${z(l.start)}/${z(e)}&location=${encodeURIComponent(l.place || "")}`; };
-const commit = () => { store.save(db); render(); };
-
-/* 期數與扣課：已完成的課從最早的期數開始扣 */
-function stats(sid){
-  let done = db.lessons.filter(l => l.sid === sid && l.status === "done").sort((a, b) => a.start.localeCompare(b.start));
-  return db.packages.filter(p => p.sid === sid).sort((a, b) => a.term - b.term).map(p => {
-    const used = done.slice(0, p.total); done = done.slice(p.total);
-    return {...p, used, remain: p.total - used.length};
-  });
-}
-const remainOf = sid => stats(sid).reduce((n, p) => n + p.remain, 0);
-
-/* ===== 元件 ===== */
-const blk = (k, title, body, right = "") => `<details class="blk" data-k="${k}"><summary>${title}${right ? `<small>${right}</small>` : ""}</summary><div class="bd">${body}</div></details>`;
-const rows = a => a.map(([k, v]) => `<div class="row"><span>${k}</span><span>${v}</span></div>`).join("");
-const step = t => { app.innerHTML = `<p class="sub" style="padding:40px 0;text-align:center">${esc(t)}</p>`; };
-const hdr = t => `<div class="top"><h1>${t}</h1><button class="link" data-act="toggleAll">全部展開/收納</button></div>`;
-const field = (n, l, t = "text", v = "", x = "") => `<label>${l}</label><input name="${n}" type="${t}" value="${esc(v)}" ${x}>`;
-const gender = v => `<label>生理性別</label><select name="gender"><option ${v === "男" ? "selected" : ""}>男</option><option ${v === "女" ? "selected" : ""}>女</option></select>`;
-
+const CONFIG={LIFF_ID:"2011857437-xFUbKdAg"};
+/* 資料層：目前存在本機瀏覽器；上線請把 load/save 換成 Supabase / Firebase */
+const blank=()=>({coach:null,students:{},packages:[],lessons:[],requests:[],notes:[],cfg:{maxDays:30,place:""}});
+const store={load(){try{return JSON.parse(localStorage.getItem("cb_db"))||blank()}catch(e){return blank()}},save(d){localStorage.setItem("cb_db",JSON.stringify(d))}};
+let db=store.load(),S={uid:null,coachMode:false,demo:!CONFIG.LIFF_ID,cv:"d",cd:new Date(),more:false,tmp:null},FIRST=true;
+const WD="日一二三四五六",p2=n=>String(n).padStart(2,"0");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";");
+const rid=()=>Math.random().toString(36).slice(2,10);
+const hm=d=>{d=new Date(d);return p2(d.getHours())+":"+p2(d.getMinutes())};
+const md=d=>{d=new Date(d);return `${d.getMonth()+1}/${d.getDate()} 週${WD[d.getDay()]}`};
+const fmt=d=>md(d)+" "+hm(d);
+const sameD=(a,b)=>new Date(a).toDateString()==new Date(b).toDateString();
+const loc=d=>{const o=new Date(d-d.getTimezoneOffset()*6e4);return o.toISOString().slice(0,16)};
+const gcal=l=>{const z=x=>new Date(x).toISOString().replace(/[-:]|\.\d{3}/g,"");const e=new Date(+new Date(l.start)+36e5);
+return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("教練課")}&dates=${z(l.start)}/${z(e)}&location=${encodeURIComponent(l.place||"")}`};
+const commit=()=>{store.save(db);render()};
+const TH=()=>{const u=S.coachMode?db.coach:db.students[S.uid];return(u&&u.theme)||S.tmp||"s"};
+/* 扣課：已完成的課從最早的期數開始；已預約的課接在後面 */
+function stats(sid){let done=db.lessons.filter(l=>l.sid===sid&&l.status==="done").sort((a,b)=>a.start.localeCompare(b.start)),sc=db.lessons.filter(l=>l.sid===sid&&l.status==="scheduled").length;
+return db.packages.filter(p=>p.sid===sid).sort((a,b)=>a.term-b.term).map(p=>{const used=done.slice(0,p.total);done=done.slice(p.total);const book=Math.min(p.total-used.length,sc);sc-=book;return{...p,used,book,remain:p.total-used.length}})}
+const remainOf=sid=>stats(sid).reduce((n,p)=>n+p.remain,0);
+/* 元件 */
+const blk=(k,t,body,r="")=>`<details class="blk" data-k="${k}"><summary><span>${t}</span><small>${r}</small></summary><div class="bd">${body}</div></details>`;
+const rows=a=>a.map(([k,v])=>`<div class="row"><span>${k}</span><span>${v}</span></div>`).join("");
+const field=(n,l,t="text",v="",x="")=>`<label>${l}</label><input name="${n}" type="${t}" value="${esc(v)}" ${x}>`;
+const gender=v=>`<label>生理性別</label><select name="gender"><option ${v==="男"?"selected":""}>男</option><option ${v==="女"?"selected":""}>女</option></select>`;
+const flap=(t,c="")=>[...t].map(x=>x===":"?`<span class="co ${c}">:</span>`:`<span class="fl ${c}">${x}</span>`).join("");
+const stp=(t,c)=>`<span class="stp ${c}">${t}</span>`;
+const tc=cur=>`<div class="tcs">${[["s","簡約"],["t","科技"]].map(([v,n])=>`<button class="tc${cur===v?" on":""}" data-act="theme" data-v="${v}"><i class="sw ${v}"></i>${n}</button>`).join("")}</div>`;
+const pls=cur=>`<div class="row"><span>視覺風格</span><div class="pls">${[["s","簡約"],["t","科技"]].map(([v,n])=>`<button class="pl${cur===v?" on":""}" data-act="theme" data-v="${v}">${n}</button>`).join("")}</div></div>`;
+const chooser=note=>`<div style="margin:8px 0"><label>視覺風格</label>${tc(TH())}<div class="sm2">${note}</div></div>`;
+/* ===== 註冊 ===== */
+const onboardS=()=>`<div data-f><h1>歡迎</h1><div class="sm2">第一次使用，請先建立個人資料。</div>${field("name","姓名","text",S.lineName||"")}${field("phone","電話","tel")}${gender("")}${field("birthday","生日","date")}<label><input type="checkbox" name="gcal">連動 Google 行事曆（可略過）</label>${chooser("之後可在「個人資料」更改")}<br><button class="btn" data-act="regStudent">建立資料</button></div>`;
+const onboardC=()=>`<div data-f><h1>教練註冊</h1><label>個人照</label><input name="photo" type="file" accept="image/*">${field("name","姓名")}${field("nick","綽號")}${field("phone","電話","tel")}${gender("")}<label>個人經歷</label><textarea name="bio" rows="4"></textarea><label><input type="checkbox" name="gcal" checked>連動 Google 行事曆</label>${chooser("之後可在「教練資料與設定」更改")}<br><button class="btn" data-act="regCoach">完成註冊</button></div>`;
 /* ===== 學員端 ===== */
-function onboardStudent(){
-  return `<div data-f class="card"><h1>歡迎</h1><p class="sub">第一次使用，請先建立個人資料。</p>
-  ${field("name", "姓名", "text", S.lineName || "")}${field("phone", "電話", "tel")}${gender("")}${field("birthday", "生日", "date")}
-  <div class="sw"><label>連動 Google 行事曆（可略過）</label><input type="checkbox" name="gcal"></div><br>
-  <button class="btn" data-act="regStudent">建立資料</button></div>`;
-}
 function studentView(){
-  const s = db.students[S.uid], c = db.coach, pk = stats(S.uid);
-  const next = db.lessons.filter(l => l.sid === S.uid && l.status === "scheduled" && new Date(l.start) > Date.now() - 36e5).sort((a, b) => a.start.localeCompare(b.start))[0];
-  const hist = db.lessons.filter(l => l.sid === S.uid && l.status === "done").sort((a, b) => b.start.localeCompare(a.start));
-  const reqs = db.requests.filter(r => r.sid === S.uid && r.status === "pending");
-  const now = new Date(), max = new Date(+now + db.cfg.maxDays * 864e5);
-  return hdr(`嗨！${esc(s.name)}`) +
-  blk("me", "個人資料", rows([["姓名", esc(s.name)], ["電話", esc(s.phone)], ["性別", s.gender], ["生日", s.birthday || "—"]]) +
-    `<div class="row sw"><span>Google 行事曆連動</span><input type="checkbox" data-act="gcalToggle" ${s.gcal ? "checked" : ""}></div>`) +
-  (c ? blk("coach", `${esc(c.nick || c.name)}教練`, `<div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">${c.photo ? `<img class="av" src="${c.photo}" alt="">` : `<div class="av"></div>`}<div><b>${esc(c.name)}</b><div class="sub">${esc(c.nick)}・${c.gender}</div></div></div>${rows([["電話", esc(c.phone)]])}<p>${esc(c.bio)}</p>`) : "") +
-  blk("next", "最近一堂課", next ? rows([["時間", fmt(next.start)], ["地點", esc(next.place || "待確認")]]) + `<div class="acts"><a class="btn s g" target="_blank" href="${gcal(next)}">加入 Google 行事曆</a></div>` : `<div class="empty">目前沒有已確認的課程</div>`, next ? fmt(next.start) : "") +
-  blk("pk", "課程期數", pk.length ? pk.map(p => rows([[`第 ${p.term} 期`, `剩 ${p.remain} / 共 ${p.total} 堂`]])).join("") + `<p class="sub">扣課從最早的期數開始。</p>` : `<div class="empty">尚未購買期數</div>`, `剩 ${remainOf(S.uid)} 堂`) +
-  blk("req", "我想約課", `<div data-f><p class="sub">最近 ${db.cfg.maxDays} 天內，提出 3 個想上課的時間，教練確認後才算正式課程。</p>` +
-    [1, 2, 3].map(i => field("t" + i, "志願 " + i, "datetime-local", "", `min="${loc(now)}" max="${loc(max)}"`)).join("") +
-    `<button class="btn" data-act="req">送出</button></div>` +
-    (reqs.length ? `<h4>等待教練確認</h4>` + reqs.map(r => `<div class="row"><span>${r.times.map(fmt).join("<br>")}</span><span class="pill">待確認</span></div>`).join("") : "")) +
-  blk("hist", "上課紀錄", hist.length ? hist.map(l => `<div class="row"><span>${fmt(l.start)}</span><span>${esc(l.place)}</span></div>`).join("") : `<div class="empty">還沒有上課紀錄</div>`, hist.length + " 堂");
+const s=db.students[S.uid],c=db.coach,pk=stats(S.uid),t=TH();
+const mine=db.lessons.filter(l=>l.sid===S.uid&&l.status==="scheduled"&&new Date(l.start)>Date.now()-36e5).sort((a,b)=>a.start.localeCompare(b.start)),next=mine[0],more=mine.slice(1);
+const hist=db.lessons.filter(l=>l.sid===S.uid&&l.status==="done").sort((a,b)=>b.start.localeCompare(a.start));
+const reqs=db.requests.filter(r=>r.sid===S.uid&&r.status==="pending"),now=new Date(),max=new Date(+now+db.cfg.maxDays*864e5);
+const nextB=next?`<div class="so big">${fmt(next.start)}</div><div class="to"><div class="sm2">NEXT　${md(next.start)}</div>${flap(hm(next.start))}</div><div class="sm2" style="margin-top:4px">${esc(next.place||"待確認")}</div><div class="acts"><a class="btn s g" target="_blank" href="${gcal(next)}">加入行事曆</a>${more.length?`<button class="lk" data-act="more">${S.more?"收合 ˄":"更多已預約 ›"}</button>`:""}</div>`+(S.more?more.map(l=>`<div class="row"><span>${stp("預","b")}　${fmt(l.start)}</span><span>${esc(l.place)}</span></div>`).join(""):""):`<div class="empty">目前沒有已確認的課程</div>`;
+const cells=p=>{let h="";for(let i=0;i<p.total;i++){const k=i<p.used.length?"d":i<p.used.length+p.book?"b":"e";h+=`<div class="cell ${k}"><span>${k=="d"?"完":k=="b"?"預":i+1}</span></div>`}return `<div class="ph"><b>第 ${p.term} 期</b><span>剩 ${p.remain} / 共 ${p.total} 堂</span></div><div class="cells">${cells0(h)}</div>`};
+const cells0=h=>h;
+return `<h1>嗨！${esc(s.name)}</h1>`+
+blk("me","個人資料",rows([["姓名",esc(s.name)],["電話",esc(s.phone)],["性別",s.gender],["生日",s.birthday||"—"]])+`<div class="row"><span>Google 行事曆連動</span><input type="checkbox" data-act="gcalToggle" ${s.gcal?"checked":""}></div>`+pls(t))+
+(c?blk("coach",`${esc(c.nick||c.name)}教練`,`<div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">${c.photo?`<img class="av" src="${c.photo}" alt="">`:`<div class="av">${esc((c.nick||c.name||"?")[0])}</div>`}<div><b>${esc(c.name)}</b><div class="sm2">${esc(c.nick)}・${c.gender}・${esc(c.phone)}</div></div></div><p style="font-size:14px;margin:0">${esc(c.bio)}</p>`):"")+
+blk("next","最近一堂課",nextB)+
+blk("pk","課程期數",pk.length?pk.map(cells).join("")+`<div class="sm2">扣課從最早的期數開始；<b>預</b>＝已預約，<b>完</b>＝已上完。</div>`:`<div class="empty">尚未購買期數</div>`,`剩 ${remainOf(S.uid)} 堂`)+
+blk("req","預約上課",`<div data-f><div class="sm2">最近 ${db.cfg.maxDays} 天內提出 3 個想上課的時間，教練確認後才算正式課程。</div>`+[1,2,3].map(i=>field("t"+i,"志願 "+i,"datetime-local","",`min="${loc(now)}" max="${loc(max)}"`)).join("")+`<button class="btn" data-act="req">送出預約</button></div>`+(reqs.length?`<h4>等待教練確認</h4>`+reqs.map(r=>`<div class="row"><span>${r.times.map(fmt).join("<br>")}</span><span class="sm2">待確認</span></div>`).join(""):""))+
+blk("hist","上課紀錄",hist.length?hist.map(l=>`<div class="row"><span>${stp("完","d")}　${fmt(l.start)}</span><span>${esc(l.place)}</span></div>`).join(""):`<div class="empty">還沒有上課紀錄</div>`,hist.length+" 堂");
 }
-
 /* ===== 教練端 ===== */
-function onboardCoach(){
-  return `<div data-f class="card"><h1>教練註冊</h1>
-  <label>個人照</label><input name="photo" type="file" accept="image/*">
-  ${field("name", "姓名")}${field("nick", "綽號")}${field("phone", "電話", "tel")}${gender("")}
-  <label>個人經歷</label><textarea name="bio" rows="4"></textarea>
-  <div class="sw"><label>連動 Google 行事曆</label><input type="checkbox" name="gcal" checked></div><br>
-  <button class="btn" data-act="regCoach">完成註冊</button></div>`;
-}
 function coachView(){
-  const c = db.coach;
-  const up = db.lessons.filter(l => l.status === "scheduled").sort((a, b) => a.start.localeCompare(b.start));
-  const pend = db.requests.filter(r => r.status === "pending");
-  const sname = id => esc(db.students[id]?.name || "?");
-  const cal = (pend.length ? `<h4>約課申請</h4>` + pend.map(r => `<div data-f data-rid="${r.id}"><b>${sname(r.sid)}</b>${field("place", "地點", "text", db.cfg.place)}<div class="acts">${r.times.map((t, i) => `<button class="btn s g" data-act="confirmReq" data-i="${i}">${fmt(t)}</button>`).join("")}<button class="btn s r" data-act="rejectReq">婉拒</button></div></div><hr>`).join("") : "") +
-    `<h4>即將到來的課程</h4>` + (up.length ? up.map(l => `<div class="row"><span>${fmt(l.start)}<br><span class="sub">${sname(l.sid)}・${esc(l.place)}</span></span><span class="acts" data-id="${l.id}"><button class="btn s g" data-act="done">完課</button><button class="btn s r" data-act="cancel">取消</button></span></div>`).join("") : `<div class="empty">沒有預約</div>`);
-  const stu = Object.entries(db.students).map(([id, s]) => {
-    const pk = stats(id), notes = db.notes.filter(n => n.sid === id).sort((a, b) => b.ts - a.ts);
-    return blk("s" + id, esc(s.name), rows([["電話", esc(s.phone)], ["性別", s.gender], ["生日", s.birthday || "—"]]) +
-      `<h4>期數與繳費</h4>` + (pk.map(p => blk("p" + p.id, `第 ${p.term} 期`, rows([["教練費", "$" + p.fee], ["付款日期", p.paid], ["付款方式", esc(p.method)]]) + (p.used.length ? p.used.map(l => `<div class="row"><span>已上</span><span>${fmt(l.start)}</span></div>`).join("") : `<div class="empty">尚未上課</div>`), `剩 ${p.remain}/${p.total}`)).join("") || `<div class="empty">尚無期數</div>`) +
-      `<div data-f data-sid="${id}"><h4>新增期數</h4>${field("fee", "教練費", "number")}${field("total", "堂數", "number")}${field("paid", "付款日期", "date", loc(new Date()).slice(0, 10))}${field("method", "付款方式", "text", "轉帳")}<button class="btn" data-act="addPkg">新增期數</button></div>` +
-      `<div data-f data-sid="${id}"><h4>直接排課</h4>${field("start", "時間", "datetime-local")}${field("place", "地點", "text", db.cfg.place)}<button class="btn g" data-act="addLesson">排課</button></div>` +
-      `<h4>備注</h4>` + notes.map(n => `<div class="row"><span>${esc(n.text)}</span><span class="sub">${new Date(n.ts).toLocaleDateString("zh-TW")}</span></div>`).join("") +
-      `<div data-f data-sid="${id}"><textarea name="text" rows="2" placeholder="新增備注"></textarea><button class="btn g" data-act="addNote">新增備注</button></div>`, `剩 ${remainOf(id)} 堂`);
-  }).join("") || `<div class="empty">還沒有學員。請學員從學員連結進入並建立資料。</div>`;
-  return hdr(`${esc(c.nick || c.name)}教練`) +
-    blk("cal", "課程預約", cal, `${up.length} 堂`) + blk("stu", "我的學員", stu, Object.keys(db.students).length + " 人") +
-    blk("prof", "教練資料與設定", `<div data-f>${field("name", "姓名", "text", c.name)}${field("nick", "綽號", "text", c.nick)}${field("phone", "電話", "tel", c.phone)}<label>個人經歷</label><textarea name="bio" rows="4">${esc(c.bio)}</textarea>
-    <label>個人照</label><input name="photo" type="file" accept="image/*">
-    ${field("maxDays", "學員可預約的天數上限", "number", db.cfg.maxDays)}${field("place", "預設上課地點", "text", db.cfg.place)}
-    <div class="sw"><label>Google 行事曆連動</label><input type="checkbox" name="gcal" ${c.gcal ? "checked" : ""}></div><br><button class="btn" data-act="saveCoach">儲存</button></div>`);
+const c=db.coach,sn=id=>esc(db.students[id]?.name||"?"),cd=new Date(S.cd);cd.setHours(0,0,0,0);
+const on=day=>db.lessons.filter(l=>sameD(l.start,day)).sort((a,b)=>a.start.localeCompare(b.start));
+const nb=v=>`<button data-act="nav" data-v="${v}" aria-label="${v>0?"下一個":"上一個"}">${v>0?"›":"‹"}</button>`;
+let cal;
+if(S.cv==="d"){const L=on(cd);cal=`<div class="nav">${nb(-1)}<b>${md(cd)}${sameD(cd,new Date())?"・今天":""}</b>${nb(1)}</div><div class="sm2">${L.length} 堂</div>`+(L.map(l=>`<div class="tk"><div class="tm"><span class="so big" style="font-size:24px">${hm(l.start)}</span><span class="to">${flap(hm(l.start),"sm")}</span></div><div class="ti"><b>${sn(l.sid)}</b><div class="sm2">${esc(l.place)}</div></div>${l.status==="done"?stp("完","d"):stp("預","b")}${l.status==="scheduled"?`<div class="acts" data-id="${l.id}"><button class="btn s g" data-act="done">完課</button><button class="btn s r" data-act="cancel">取消</button></div>`:""}</div>`).join("")||`<div class="empty">這天沒有課程</div>`)}
+else if(S.cv==="w"){const w0=new Date(cd);w0.setDate(w0.getDate()-(w0.getDay()+6)%7);let h="";
+for(let i=0;i<7;i++){const d=new Date(w0);d.setDate(w0.getDate()+i);h+=`<div class="wc${sameD(d,new Date())?" td":""}" data-act="goto" data-d="${d.toISOString()}"><b>${WD[d.getDay()]}</b><span class="sm2">${d.getDate()}</span>`+on(d).map(l=>`<div class="chip ${l.status==="done"?"d":"b"}">${hm(l.start)}<br>${sn(l.sid).slice(0,3)}</div>`).join("")+`</div>`}
+const e=new Date(w0);e.setDate(e.getDate()+6);cal=`<div class="nav">${nb(-1)}<b>${w0.getMonth()+1}/${w0.getDate()} – ${e.getMonth()+1}/${e.getDate()}</b>${nb(1)}</div><div class="wk">${h}</div><div class="sm2">點選日期可看當天明細</div>`}
+else{const m0=new Date(cd.getFullYear(),cd.getMonth(),1),off=(m0.getDay()+6)%7,n=Math.ceil((off+new Date(cd.getFullYear(),cd.getMonth()+1,0).getDate())/7)*7;let h=WD.split("").map((x,i)=>"").join("");
+h="一二三四五六日".split("").map(x=>`<div style="text-align:center;font:700 13px var(--fs)">${x}</div>`).join("");
+for(let i=0;i<n;i++){const d=new Date(m0);d.setDate(1-off+i);const L=on(d),inm=d.getMonth()===m0.getMonth();h+=`<div class="mc${inm?"":" x"}${sameD(d,new Date())?" td":""}" data-act="goto" data-d="${d.toISOString()}"><span>${d.getDate()}</span>${L.length?stp(L.length,L.some(l=>l.status==="scheduled")?"b":"d"):""}</div>`}
+cal=`<div class="nav">${nb(-1)}<b>${m0.getFullYear()} 年 ${m0.getMonth()+1} 月</b>${nb(1)}</div><div class="mo">${h}</div><div class="sm2">${stp("完","d").replace('class="stp','class="stp" style="width:16px;height:16px;font-size:9px;vertical-align:middle" data-x="')} 已上完　${stp("預","b").replace('class="stp','class="stp" style="width:16px;height:16px;font-size:9px;vertical-align:middle" data-x="')} 已預約　（圈內＝堂數）</div>`}
+const pend=db.requests.filter(r=>r.status==="pending");
+const reqB=pend.map(r=>`<div data-f data-rid="${r.id}" class="tk" style="display:block"><b>${sn(r.sid)}</b>${field("place","地點","text",db.cfg.place)}<div class="acts" style="justify-content:flex-start">${r.times.map((t,i)=>`<button class="btn s g" data-act="confirmReq" data-i="${i}">${fmt(t)}</button>`).join("")}<button class="btn s r" data-act="rejectReq">婉拒</button></div></div>`).join("")||`<div class="empty">沒有待確認的申請</div>`;
+const stu=Object.entries(db.students).map(([id,s])=>{const pk=stats(id),notes=db.notes.filter(n=>n.sid===id).sort((a,b)=>b.ts-a.ts);
+return blk("s"+id,esc(s.name),rows([["電話",esc(s.phone)],["性別",s.gender],["生日",s.birthday||"—"]])+`<h4>期數與繳費</h4>`+(pk.map(p=>blk("p"+p.id,`第 ${p.term} 期`,rows([["教練費","$"+p.fee],["付款日期",p.paid],["付款方式",esc(p.method)]])+(p.used.length?p.used.map(l=>`<div class="row"><span>${stp("完","d")}　已上</span><span>${fmt(l.start)}</span></div>`).join(""):`<div class="empty">尚未上課</div>`),`剩 ${p.remain}/${p.total}`)).join("")||`<div class="empty">尚無期數</div>`)+
+`<div data-f data-sid="${id}"><h4>新增期數</h4>${field("fee","教練費","number")}${field("total","堂數","number")}${field("paid","付款日期","date",loc(new Date()).slice(0,10))}${field("method","付款方式","text","轉帳")}<button class="btn" data-act="addPkg">新增期數</button></div>`+
+`<div data-f data-sid="${id}"><h4>直接排課</h4>${field("start","時間","datetime-local")}${field("place","地點","text",db.cfg.place)}<button class="btn g" data-act="addLesson">排課</button></div>`+
+`<h4>備注</h4>`+notes.map(n=>`<div class="row"><span>${esc(n.text)}</span><span class="sm2">${new Date(n.ts).toLocaleDateString("zh-TW")}</span></div>`).join("")+`<div data-f data-sid="${id}"><textarea name="text" rows="2" placeholder="新增備注"></textarea><button class="btn g" data-act="addNote">新增備注</button></div>`,`剩 ${remainOf(id)} 堂`)}).join("")||`<div class="empty">還沒有學員。請學員從學員連結進入並建立資料。</div>`;
+const seg=[["d","日"],["w","週"],["m","月"]].map(([k,n])=>`<button class="${S.cv===k?"on":""}" data-act="cv" data-v="${k}">${n}</button>`).join("");
+return `<h1>${esc(c.nick||c.name)}教練</h1><div class="seg">${seg}</div>${cal}`+
+blk("req","約課申請",reqB,pend.length?`<span class="badge">${pend.length}</span>`:"")+blk("stu","我的學員",stu,Object.keys(db.students).length+" 人")+
+blk("prof","教練資料與設定",`<div data-f>${field("name","姓名","text",c.name)}${field("nick","綽號","text",c.nick)}${field("phone","電話","tel",c.phone)}<label>個人經歷</label><textarea name="bio" rows="4">${esc(c.bio)}</textarea><label>個人照</label><input name="photo" type="file" accept="image/*">${field("maxDays","學員可預約的天數上限","number",db.cfg.maxDays)}${field("place","預設上課地點","text",db.cfg.place)}<label><input type="checkbox" name="gcal" ${c.gcal?"checked":""}>Google 行事曆連動</label>${pls(TH())}<br><button class="btn" data-act="saveCoach">儲存</button></div>`);
 }
-
 /* ===== 渲染 ===== */
 function render(){
-  const open = new Set([...document.querySelectorAll("details[open]")].map(d => d.dataset.k));
-  let h;
-  if (S.coachMode){
-    if (!db.coach) h = onboardCoach();
-    else if (db.coach.uid !== S.uid) h = `<div class="card"><h1>無法進入</h1><p class="sub">這個連結只提供教練使用。</p></div>`;
-    else h = coachView();
-  } else h = db.students[S.uid] ? studentView() : onboardStudent();
-  if (S.demo) h += `<footer>示範模式（資料只存在這支瀏覽器）<br><a href="?">學員視角</a>・<a href="?role=coach">教練視角</a>・<a href="#" data-act="newStu">換成新學員</a>・<a href="#" data-act="reset">清除資料</a></footer>`;
-  app.innerHTML = h;
-  document.querySelectorAll("details").forEach(d => { if (open.has(d.dataset.k)) d.open = true; });
+const open=FIRST?new Set(S.coachMode?[]:["next","pk"]):new Set([...document.querySelectorAll("details[open]")].map(d=>d.dataset.k));FIRST=false;
+document.documentElement.dataset.th=TH();
+let h;
+if(S.coachMode){h=!db.coach?onboardC():db.coach.uid!==S.uid?`<h1>無法進入</h1><p class="sm2">這個連結只提供教練使用。</p>`:coachView()}
+else h=db.students[S.uid]?studentView():onboardS();
+if(S.demo)h+=`<footer>示範模式（資料只存在這支瀏覽器）<br><a href="?">學員視角</a>・<a href="?role=coach">教練視角</a>・<a href="#" data-act="newStu">換成新學員</a>・<a href="#" data-act="reset">清除資料</a></footer>`;
+app.innerHTML=h;
+document.querySelectorAll("details").forEach(d=>{if(open.has(d.dataset.k))d.open=true});
 }
-
 /* ===== 事件 ===== */
-const rd = f => Object.fromEntries([...f.querySelectorAll("[name]")].map(i => [i.name, i.type === "checkbox" ? i.checked : i.value.trim()]));
-const photoOf = file => new Promise(res => { if (!file) return res(null); const r = new FileReader(); r.onload = () => { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"), k = 240 / Math.min(im.width, im.height); c.width = im.width * k; c.height = im.height * k; c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", .8)); }; im.src = r.result; }; r.readAsDataURL(file); });
-
-document.addEventListener("click", async e => {
-  const b = e.target.closest("[data-act]"); if (!b || b.type === "checkbox") return;
-  const a = b.dataset.act, f = b.closest("[data-f]"), d = f ? rd(f) : {}, sid = f?.dataset.sid, id = b.closest("[data-id]")?.dataset.id;
-  if (a === "toggleAll"){ const all = [...document.querySelectorAll("details")]; const any = all.some(x => !x.open); all.forEach(x => x.open = any); return; }
-  if (a === "newStu"){ e.preventDefault(); localStorage.cb_uid = "U" + rid(); location.href = "?"; return; }
-  if (a === "reset"){ e.preventDefault(); if (confirm("確定清除所有示範資料？")){ localStorage.clear(); location.href = "?"; } return; }
-  const need = (...k) => k.every(x => d[x]) || (alert("請填寫完整"), false);
-  if (a === "regStudent"){ if (!need("name", "phone", "birthday")) return; db.students[S.uid] = {name: d.name, phone: d.phone, gender: d.gender, birthday: d.birthday, gcal: d.gcal}; }
-  if (a === "regCoach"){ if (!need("name", "phone")) return; db.coach = {uid: S.uid, name: d.name, nick: d.nick, phone: d.phone, gender: d.gender, bio: d.bio, gcal: d.gcal, photo: await photoOf(f.querySelector("[name=photo]").files[0])}; }
-  if (a === "saveCoach"){ const p = await photoOf(f.querySelector("[name=photo]").files[0]); Object.assign(db.coach, {name: d.name, nick: d.nick, phone: d.phone, bio: d.bio, gcal: d.gcal}); if (p) db.coach.photo = p; db.cfg.maxDays = +d.maxDays || 30; db.cfg.place = d.place; }
-  if (a === "req"){ const t = [d.t1, d.t2, d.t3].filter(Boolean); if (t.length < 3) return alert("請填滿 3 個時間"); db.requests.push({id: rid(), sid: S.uid, times: t.map(x => new Date(x).toISOString()), status: "pending"}); }
-  if (a === "confirmReq"){ const r = db.requests.find(x => x.id === f.dataset.rid); r.status = "confirmed"; db.lessons.push({id: rid(), sid: r.sid, start: r.times[+b.dataset.i], place: d.place, status: "scheduled"}); }
-  if (a === "rejectReq"){ db.requests.find(x => x.id === f.dataset.rid).status = "rejected"; }
-  if (a === "addLesson"){ if (!need("start")) return; db.lessons.push({id: rid(), sid, start: new Date(d.start).toISOString(), place: d.place, status: "scheduled"}); }
-  if (a === "done"){ db.lessons.find(l => l.id === id).status = "done"; }
-  if (a === "cancel"){ db.lessons = db.lessons.filter(l => l.id !== id); }
-  if (a === "addPkg"){ if (!need("fee", "total", "paid")) return; db.packages.push({id: rid(), sid, term: db.packages.filter(p => p.sid === sid).length + 1, fee: +d.fee, total: +d.total, paid: d.paid, method: d.method}); }
-  if (a === "addNote"){ if (!need("text")) return; db.notes.push({sid, text: d.text, ts: Date.now()}); }
-  commit();
+const rd=f=>Object.fromEntries([...f.querySelectorAll("[name]")].map(i=>[i.name,i.type==="checkbox"?i.checked:i.value.trim()]));
+const photoOf=file=>new Promise(res=>{if(!file)return res(null);const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),k=240/Math.min(im.width,im.height);c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.8))};im.src=r.result};r.readAsDataURL(file)});
+document.addEventListener("click",async e=>{
+const b=e.target.closest("[data-act]");if(!b||b.type==="checkbox")return;
+const a=b.dataset.act,f=b.closest("[data-f]"),d=f?rd(f):{},sid=f?.dataset.sid,id=b.closest("[data-id]")?.dataset.id;
+if(a==="theme"){const v=b.dataset.v,u=S.coachMode?db.coach:db.students[S.uid];if(u){u.theme=v;commit()}else{S.tmp=v;document.documentElement.dataset.th=v;document.querySelectorAll(".tc").forEach(x=>x.classList.toggle("on",x.dataset.v===v))}return}
+if(a==="newStu"){e.preventDefault();localStorage.cb_uid="U"+rid();location.href="?";return}
+if(a==="reset"){e.preventDefault();if(confirm("確定清除所有示範資料？")){localStorage.clear();location.href="?"}return}
+if(a==="more"){S.more=!S.more;return render()}
+if(a==="cv"){S.cv=b.dataset.v;return render()}
+if(a==="goto"){S.cd=new Date(b.dataset.d);S.cv="d";return render()}
+if(a==="nav"){const v=+b.dataset.v,x=new Date(S.cd);if(S.cv==="d")x.setDate(x.getDate()+v);else if(S.cv==="w")x.setDate(x.getDate()+7*v);else{x.setDate(1);x.setMonth(x.getMonth()+v)}S.cd=x;return render()}
+const need=(...k)=>k.every(x=>d[x])||(alert("請填寫完整"),false);
+if(a==="regStudent"){if(!need("name","phone","birthday"))return;db.students[S.uid]={name:d.name,phone:d.phone,gender:d.gender,birthday:d.birthday,gcal:d.gcal,theme:S.tmp||"s"};FIRST=true}
+if(a==="regCoach"){if(!need("name","phone"))return;db.coach={uid:S.uid,name:d.name,nick:d.nick,phone:d.phone,gender:d.gender,bio:d.bio,gcal:d.gcal,theme:S.tmp||"s",photo:await photoOf(f.querySelector("[name=photo]").files[0])};FIRST=true}
+if(a==="saveCoach"){const p=await photoOf(f.querySelector("[name=photo]").files[0]);Object.assign(db.coach,{name:d.name,nick:d.nick,phone:d.phone,bio:d.bio,gcal:d.gcal});if(p)db.coach.photo=p;db.cfg.maxDays=+d.maxDays||30;db.cfg.place=d.place}
+if(a==="req"){const t=[d.t1,d.t2,d.t3].filter(Boolean);if(t.length<3)return alert("請填滿 3 個時間");db.requests.push({id:rid(),sid:S.uid,times:t.map(x=>new Date(x).toISOString()),status:"pending"})}
+if(a==="confirmReq"){const r=db.requests.find(x=>x.id===f.dataset.rid);r.status="confirmed";db.lessons.push({id:rid(),sid:r.sid,start:r.times[+b.dataset.i],place:d.place,status:"scheduled"})}
+if(a==="rejectReq"){db.requests.find(x=>x.id===f.dataset.rid).status="rejected"}
+if(a==="addLesson"){if(!need("start"))return;db.lessons.push({id:rid(),sid,start:new Date(d.start).toISOString(),place:d.place,status:"scheduled"})}
+if(a==="done"){db.lessons.find(l=>l.id===id).status="done"}
+if(a==="cancel"){db.lessons=db.lessons.filter(l=>l.id!==id)}
+if(a==="addPkg"){if(!need("fee","total","paid"))return;db.packages.push({id:rid(),sid,term:db.packages.filter(p=>p.sid===sid).length+1,fee:+d.fee,total:+d.total,paid:d.paid,method:d.method})}
+if(a==="addNote"){if(!need("text"))return;db.notes.push({sid,text:d.text,ts:Date.now()})}
+commit();
 });
-document.addEventListener("change", e => {
-  if (e.target.dataset.act === "gcalToggle"){ db.students[S.uid].gcal = e.target.checked; commit(); }
-});
-
+document.addEventListener("change",e=>{if(e.target.dataset.act==="gcalToggle"){db.students[S.uid].gcal=e.target.checked;commit()}});
 /* ===== 啟動 ===== */
+const step=t=>{app.innerHTML=`<p class="sm2" style="padding:40px 0;text-align:center">${esc(t)}</p>`};
 (async function init(){
-  S.coachMode = /role(=|%3D)coach/.test(location.href);
-  if (CONFIG.LIFF_ID){
-    try{
-      if (typeof liff === "undefined") throw new Error("LINE LIFF SDK 載入失敗，請檢查網路後重試");
-      step("連線 LINE…");
-      await Promise.race([liff.init({liffId: CONFIG.LIFF_ID}), new Promise((_, rej) => setTimeout(() => rej(new Error("LIFF 初始化逾時，請確認 LIFF Endpoint URL 與網址相符")), 10000))]);
-      if (!liff.isLoggedIn()){ liff.login(); return; }
-      step("取得使用者資料…");
-      const p = await liff.getProfile(); S.uid = p.userId; S.lineName = p.displayName;
-    }catch(err){
-      console.error(err);
-      app.innerHTML = `<div class="card"><h1>無法開啟</h1><p class="sub">LINE 登入初始化失敗：</p><p class="sub">${esc(err.message || err)}</p></div>`;
-      return;
-    }
-  }
-  if (!S.uid) S.uid = new URLSearchParams(location.search).get("uid") || localStorage.cb_uid || (localStorage.cb_uid = "U" + rid());
-  step("載入畫面…");
-  render();
+S.coachMode=/role(=|%3D)coach/.test(location.href);
+if(CONFIG.LIFF_ID){
+try{
+if(typeof liff==="undefined")throw new Error("LINE LIFF SDK 載入失敗，請檢查網路後重試");
+step("連線 LINE…");
+await Promise.race([liff.init({liffId:CONFIG.LIFF_ID}),new Promise((_,rej)=>setTimeout(()=>rej(new Error("LIFF 初始化逾時，請確認 LIFF Endpoint URL 與網址相符")),10000))]);
+if(!liff.isLoggedIn()){liff.login();return}
+step("取得使用者資料…");
+const p=await liff.getProfile();S.uid=p.userId;S.lineName=p.displayName;
+}catch(err){console.error(err);app.innerHTML=`<h1>無法開啟</h1><p class="sm2">LINE 登入初始化失敗：</p><p class="sm2">${esc(err.message||err)}</p>`;return}
+}
+if(!S.uid)S.uid=new URLSearchParams(location.search).get("uid")||localStorage.cb_uid||(localStorage.cb_uid="U"+rid());
+step("載入畫面…");
+render();
 })();
 </script>
 </body>
