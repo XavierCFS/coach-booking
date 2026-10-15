@@ -197,7 +197,7 @@ const c=db.coach,sn=id=>esc(db.students[id]?.name||"?"),cd=new Date(S.cd);cd.set
 const on=day=>db.lessons.filter(l=>sameD(l.start,day)).sort((a,b)=>a.start.localeCompare(b.start));
 const nb=v=>`<button data-act="nav" data-v="${v}" aria-label="${v>0?"下一個":"上一個"}">${v>0?"›":"‹"}</button>`;
 let cal;
-if(S.cv==="d"){const L=on(cd);cal=`<div class="nav">${nb(-1)}<b>${md(cd)}${sameD(cd,new Date())?"・今天":""}</b>${nb(1)}</div><div class="sm2">${L.length} 堂</div>`+(L.map(l=>`<div class="tk"><div class="tm"><span class="so big" style="font-size:24px">${hm(l.start)}</span><span class="to">${flap(hm(l.start),"sm")}</span></div><div class="ti"><b>${sn(l.sid)}</b><div class="sm2">${esc(l.place)}</div></div>${l.status==="done"?stp("完","d"):stp("預","b")}${l.status==="scheduled"?`<div class="acts" data-id="${l.id}"><button class="btn s g" data-act="done">完課</button><button class="btn s r" data-act="cancel">取消</button></div>`:""}</div>`).join("")||`<div class="empty">這天沒有課程</div>`)}
+if(S.cv==="d"){const L=on(cd);cal=`<div class="nav">${nb(-1)}<b>${md(cd)}${sameD(cd,new Date())?"・今天":""}</b>${nb(1)}</div><div class="sm2">${L.length} 堂</div>`+(L.map(l=>`<div class="tk"><div class="tm"><span class="so big" style="font-size:24px">${hm(l.start)}</span><span class="to">${flap(hm(l.start),"sm")}</span></div><div class="ti"><b>${sn(l.sid)}</b><div class="sm2">${esc(l.place)}</div></div>${l.status==="done"?stp("完","d"):stp("預","b")}${l.status!=="scheduled"?"":S.edit===l.id?`<div data-f data-id="${l.id}" style="width:100%">${field("sd","日期","date",ymd(new Date(l.start)))}<label>時間</label>${tsel("st",hm(l.start),0,1410)}${field("place","地點","text",l.place)}<div class="acts" style="justify-content:flex-start"><button class="btn s" data-act="saveEdit">儲存</button><button class="btn s g" data-act="cancelEdit">放棄修改</button></div></div>`:`<div class="acts" data-id="${l.id}"><button class="btn s g" data-act="done">完課</button><button class="btn s g" data-act="edit">修改</button><button class="btn s r" data-act="cancel">取消</button></div>`}</div>`).join("")||`<div class="empty">這天沒有課程</div>`)}
 else if(S.cv==="w"){const w0=new Date(cd);w0.setDate(w0.getDate()-(w0.getDay()+6)%7);let h="";
 for(let i=0;i<7;i++){const d=new Date(w0);d.setDate(w0.getDate()+i);h+=`<div class="wc${sameD(d,new Date())?" td":""}" data-act="goto" data-d="${d.toISOString()}"><b>${WD[d.getDay()]}</b><span class="sm2">${d.getDate()}</span>`+on(d).map(l=>`<div class="chip ${l.status==="done"?"d":"b"}">${hm(l.start)}<br>${sn(l.sid).slice(0,3)}</div>`).join("")+`</div>`}
 const e=new Date(w0);e.setDate(e.getDate()+6);cal=`<div class="nav">${nb(-1)}<b>${w0.getMonth()+1}/${w0.getDate()} – ${e.getMonth()+1}/${e.getDate()}</b>${nb(1)}</div><div class="wk">${h}</div><div class="sm2">點選日期可看當天明細</div>`}
@@ -237,6 +237,9 @@ const a=b.dataset.act,f=b.closest("[data-f]"),d=f?rd(f):{},sid=f?.dataset.sid,id
 if(a==="theme"){const v=b.dataset.v,u=S.coachMode?db.coach:db.students[S.uid];if(u){u.theme=v;commit()}else{S.tmp=v;document.documentElement.dataset.th=v;document.querySelectorAll(".tc").forEach(x=>x.classList.toggle("on",x.dataset.v===v))}return}
 if(a==="newStu"){e.preventDefault();localStorage.cb_uid="U"+rid();location.href="?";return}
 if(a==="reset"){e.preventDefault();if(confirm("確定清除所有示範資料？")){localStorage.clear();location.href="?"}return}
+if(["cv","goto","nav"].includes(a))S.edit=null;
+if(a==="edit"){S.edit=id;return render()}
+if(a==="cancelEdit"){S.edit=null;return render()}
 if(a==="more"){S.more=!S.more;return render()}
 if(a==="cv"){S.cv=b.dataset.v;return render()}
 if(a==="goto"){S.cd=new Date(b.dataset.d);S.cv="d";return render()}
@@ -257,8 +260,10 @@ if(a==="addBlock"){if(tm(d.bto)<=tm(d.bfrom))return alert("結束時間需晚於
 if(a==="delBlock"){db.cfg.blocks=(db.cfg.blocks||[]).filter(x=>x.id!==b.dataset.bid)}
 if(a==="addOff"){if(!need("od"))return;db.cfg.offDates=[...new Set([...(db.cfg.offDates||[]),d.od])].sort()}
 if(a==="delOff"){db.cfg.offDates=(db.cfg.offDates||[]).filter(x=>x!==b.dataset.od)}
-if(a==="done"){db.lessons.find(l=>l.id===id).status="done"}
-if(a==="cancel"){db.lessons=db.lessons.filter(l=>l.id!==id)}
+if(a==="done"){const l=db.lessons.find(x=>x.id===id);if(!confirm(`確認「${db.students[l.sid]?.name||""}」${fmt(l.start)} 這堂課已完課？\n\n完課後會從課程期數扣除 1 堂。`))return;l.status="done"}
+if(a==="cancel"){const l=db.lessons.find(x=>x.id===id);if(!confirm(`確定取消「${db.students[l.sid]?.name||""}」${fmt(l.start)} 的課程？\n\n取消後會從行事曆移除。`))return;db.lessons=db.lessons.filter(x=>x.id!==id)}
+if(a==="saveEdit"){if(!need("sd","st"))return;const l=db.lessons.find(x=>x.id===id),t=new Date(d.sd+"T"+d.st).toISOString(),clash=db.lessons.some(x=>x.id!==id&&x.status==="scheduled"&&Math.abs(new Date(x.start)-new Date(t))<LEN*6e4);
+if(!confirm(`確認修改「${db.students[l.sid]?.name||""}」的課程？\n\n原時間：${fmt(l.start)}\n新時間：${fmt(t)}\n地點：${d.place||"未填"}`+(clash?"\n\n⚠ 這個時段與其他已預約的課程重疊":"")))return;l.start=t;l.place=d.place;S.cd=new Date(t);S.edit=null}
 if(a==="addPkg"){if(!need("fee","total","paid"))return;db.packages.push({id:rid(),sid,term:db.packages.filter(p=>p.sid===sid).length+1,fee:+d.fee,total:+d.total,paid:d.paid,method:d.method})}
 if(a==="addNote"){if(!need("text"))return;db.notes.push({sid,text:d.text,ts:Date.now()})}
 commit();
