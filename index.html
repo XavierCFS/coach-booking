@@ -102,6 +102,7 @@ a{color:var(--b)}footer{margin:24px 0;text-align:center;font-size:13px;color:var
 [data-th=r] .tc{border-radius:14px}[data-th=r] .tc.on{border:2px solid var(--ac);padding:9px}
 [data-th=r] .lk{color:var(--ac)}
 .sw.r{background:#fff;border-color:#86868b}.sw.r::after{content:"";position:absolute;inset:7px;border:2px solid #0071e3;border-radius:5px}
+.cal{margin-bottom:18px}
 #strip{display:none}
 [data-th=t] #strip{display:flex;position:fixed;top:calc(10px + env(safe-area-inset-top));left:20px;right:20px;max-width:520px;margin:0 auto;justify-content:space-between;font-size:11px;letter-spacing:.12em;color:var(--sub);border-bottom:1px solid var(--ln);padding-bottom:4px;z-index:2}
 .bl{font-style:normal;color:var(--tx);animation:bl 1.1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
@@ -212,7 +213,7 @@ return blk("s"+id,esc(s.name),rows([["電話",esc(s.phone)],["性別",s.gender],
 `<div data-f data-sid="${id}"><h4>直接排課</h4>${field("sd","日期","date")}<label>時間</label>${tsel("st","",360,1410,1)}${field("place","地點","text",db.cfg.place)}<button class="btn g" data-act="addLesson">排課</button></div>`+
 `<h4>備注</h4>`+notes.map(n=>`<div class="row"><span>${esc(n.text)}</span><span class="sm2">${new Date(n.ts).toLocaleDateString("zh-TW")}</span></div>`).join("")+`<div data-f data-sid="${id}"><textarea name="text" rows="2" placeholder="新增備注"></textarea><button class="btn g" data-act="addNote">新增備注</button></div>`,`剩 ${remainOf(id)} 堂`)}).join("")||`<div class="empty">還沒有學員。請學員從學員連結進入並建立資料。</div>`;
 const seg=[["d","日"],["w","週"],["m","月"]].map(([k,n])=>`<button class="${S.cv===k?"on":""}" data-act="cv" data-v="${k}">${n}</button>`).join("");
-return H(`${esc(c.nick||c.name)}教練`,"你的課程與學員。")+`<div class="seg">${seg}</div>${cal}`+
+return H(`${esc(c.nick||c.name)}教練`,"你的課程與學員。")+`<div class="seg">${seg}</div><div class="cal">${cal}</div>`+
 blk("req","約課申請",reqB,pend.length?`<span class="badge">${pend.length}</span>`:"")+blk("stu","我的學員",stu,Object.keys(db.students).length+" 人")+blk("cfg","預約設定",cfgB())+
 blk("prof","教練資料與設定",`<div data-f>${field("name","姓名","text",c.name)}${field("nick","綽號","text",c.nick)}${field("phone","電話","tel",c.phone)}<label>個人經歷</label><textarea name="bio" rows="4">${esc(c.bio)}</textarea><label>個人照</label><input name="photo" type="file" accept="image/*">${field("place","預設上課地點","text",db.cfg.place)}<label><input type="checkbox" name="gcal" ${c.gcal?"checked":""}>Google 行事曆連動</label>${pls(TH())}<br><button class="btn" data-act="saveCoach">儲存</button></div>`);
 }
