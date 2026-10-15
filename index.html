@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" data-th="s">
+<html lang="zh-Hant" data-th="r">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -35,7 +35,7 @@ label{font-size:12px;color:var(--sub)}
 .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center}
 .big{font:900 32px var(--fs)}
 .tk{border:2px dashed var(--tx);border-radius:6px;padding:10px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:10px}.tm{width:86px}.ti{flex:1}.tk .acts{width:100%;justify-content:flex-start}
-[data-th=t] .so,[data-th=s] .to{display:none}
+[data-th=t] .so,[data-th=s] .to,[data-th=r] .to{display:none}
 .stp{display:inline-flex;width:28px;height:28px;border:2px solid;border-radius:50%;align-items:center;justify-content:center;font:900 15px var(--fs);flex:none}
 .stp.d{color:var(--d)}.stp.b{color:var(--b);opacity:.75}[data-th=t] .stp{border-radius:2px}
 .ph{display:flex;justify-content:space-between;margin-top:8px;font-size:14px}.ph b{font:700 18px var(--fs)}
@@ -69,6 +69,39 @@ label{font-size:12px;color:var(--sub)}
 .av{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--tx);display:flex;align-items:center;justify-content:center;font:900 28px var(--fs);flex:none}
 .badge{border:2px solid var(--d);color:var(--d);border-radius:99px;padding:0 8px;font:900 13px var(--fs)}
 a{color:var(--b)}footer{margin:24px 0;text-align:center;font-size:13px;color:var(--sub)}.empty{color:var(--sub);padding:6px 0}
+.gs,.rx{display:none}
+[data-th=r]{--bg:#fff;--tx:#1d1d1f;--sub:#6e6e73;--ln:#d2d2d7;--ac:#0071e3;--on:#fff;--d:#86868b;--b:#0071e3;--hl:#f5f5f7;--ff:-apple-system,BlinkMacSystemFont,'SF Pro Text','PingFang TC','Noto Sans TC',sans-serif;--fs:var(--ff);--r:12px}
+[data-th=r] .rx{display:inline}[data-th=r] .gs{display:inline;color:#86868b}
+[data-th=r] h1{font:700 24px/1.3 var(--ff)}[data-th=r] .big{font:700 26px var(--ff)}
+[data-th=r] details.blk{border:1px solid #86868b;border-radius:18px;padding:0 18px;margin-bottom:14px}
+[data-th=r] details.blk.sel{border:2px solid var(--ac);padding:0 17px}
+[data-th=r] details.blk details.blk{border:1px solid var(--ln);border-radius:12px;padding:0 12px;margin:8px 0 0}
+[data-th=r] summary{font:700 18px var(--ff)}
+[data-th=r] input,[data-th=r] select,[data-th=r] textarea{border:1px solid var(--ln);border-radius:12px;padding:12px 14px;margin:4px 0 12px}
+[data-th=r] input[type=checkbox]{padding:0;margin:0 8px 0 0}
+[data-th=r] .btn{border-radius:980px;font-weight:500}
+[data-th=r] .btn.g{border:1px solid var(--ln);color:var(--ac);background:none}
+[data-th=r] .btn.r{border:1px solid #d70015;color:#d70015}
+[data-th=r] .badge{border-color:#bf4800;color:#bf4800}
+[data-th=r] .tk{border:1px solid #86868b;border-radius:18px}
+[data-th=r] .stp{border:0;font-weight:600}
+[data-th=r] .stp.d{background:#e5e5ea;color:var(--tx);opacity:1}
+[data-th=r] .stp.b{background:var(--ac);color:#fff;opacity:1}
+[data-th=r] .cells{gap:8px}
+[data-th=r] .cell{border:1px solid var(--ln);border-radius:10px;color:var(--sub);font:600 13px var(--ff);transform:none!important}
+[data-th=r] .cell.d{background:#d2d2d7;border:0;color:var(--tx);opacity:1}
+[data-th=r] .cell.b{background:var(--ac);border:0;color:#fff;opacity:1}
+[data-th=r] .seg{background:#eeeef1;border-radius:10px;padding:2px;gap:0}
+[data-th=r] .seg button{border:0;border-radius:8px;min-height:36px;font:400 14px var(--ff);background:none;color:var(--tx)}
+[data-th=r] .seg button.on{background:#fff;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+[data-th=r] .chip{border:0;font-weight:500}
+[data-th=r] .chip.d{background:#eeeef1;color:var(--tx)}
+[data-th=r] .chip.b{background:var(--ac);color:#fff;opacity:1}
+[data-th=r] .pl{border:1px solid var(--ln);border-radius:980px}[data-th=r] .pl.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+[data-th=r] .wc.td,[data-th=r] .mc.td{border:2px solid var(--ac);background:#fff}
+[data-th=r] .tc{border-radius:14px}[data-th=r] .tc.on{border:2px solid var(--ac);padding:9px}
+[data-th=r] .lk{color:var(--ac)}
+.sw.r{background:#fff;border-color:#86868b}.sw.r::after{content:"";position:absolute;inset:7px;border:2px solid #0071e3;border-radius:5px}
 #strip{display:none}
 [data-th=t] #strip{display:flex;position:fixed;top:calc(10px + env(safe-area-inset-top));left:20px;right:20px;max-width:520px;margin:0 auto;justify-content:space-between;font-size:11px;letter-spacing:.12em;color:var(--sub);border-bottom:1px solid var(--ln);padding-bottom:4px;z-index:2}
 .bl{font-style:normal;color:var(--tx);animation:bl 1.1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
@@ -100,7 +133,7 @@ const loc=d=>{const o=new Date(d-d.getTimezoneOffset()*6e4);return o.toISOString
 const gcal=l=>{const z=x=>new Date(x).toISOString().replace(/[-:]|\.\d{3}/g,"");const e=new Date(+new Date(l.start)+36e5);
 return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("教練課")}&dates=${z(l.start)}/${z(e)}&location=${encodeURIComponent(l.place||"")}`};
 const commit=()=>{store.save(db);render()};
-const TH=()=>{const u=S.coachMode?db.coach:db.students[S.uid];return(u&&u.theme)||S.tmp||"s"};
+const TH=()=>{const u=S.coachMode?db.coach:db.students[S.uid];return(u&&u.theme)||S.tmp||"r"};
 /* 扣課：已完成的課從最早的期數開始；已預約的課接在後面 */
 function stats(sid){let done=db.lessons.filter(l=>l.sid===sid&&l.status==="done").sort((a,b)=>a.start.localeCompare(b.start)),sc=db.lessons.filter(l=>l.sid===sid&&l.status==="scheduled").length;
 return db.packages.filter(p=>p.sid===sid).sort((a,b)=>a.term-b.term).map(p=>{const used=done.slice(0,p.total);done=done.slice(p.total);const book=Math.min(p.total-used.length,sc);sc-=book;return{...p,used,book,remain:p.total-used.length}})}
@@ -127,18 +160,19 @@ return `<div data-f><h4>開放預約時段</h4><div class="dt">${tsel("open",c.o
 `<h4>指定休假日</h4>`+(c.offDates.map(x=>`<div class="row"><span>${x}　週${WD[new Date(x+"T00:00").getDay()]}</span><button class="lk" data-act="delOff" data-od="${x}">刪除</button></div>`).join("")||`<div class="empty">尚未設定</div>`)+
 `<div data-f>${field("od","日期","date")}<button class="btn g" data-act="addOff">新增休假日</button></div>`}
 /* 元件 */
-const blk=(k,t,body,r="")=>`<details class="blk" data-k="${k}"><summary><span>${t}</span><small>${r}</small></summary><div class="bd">${body}</div></details>`;
+const H=(a,b)=>`<h1>${a}<span class="rx">。</span><span class="gs"> ${b}</span></h1>`;
+const blk=(k,t,body,r="",cls="")=>`<details class="blk${cls?" "+cls:""}" data-k="${k}"><summary><span>${t}</span><small>${r}</small></summary><div class="bd">${body}</div></details>`;
 const rows=a=>a.map(([k,v])=>`<div class="row"><span>${k}</span><span>${v}</span></div>`).join("");
 const field=(n,l,t="text",v="",x="")=>`<label>${l}</label><input name="${n}" type="${t}" value="${esc(v)}" ${x}>`;
 const gender=v=>`<label>生理性別</label><select name="gender"><option ${v==="男"?"selected":""}>男</option><option ${v==="女"?"selected":""}>女</option></select>`;
 const flap=(t,c="")=>[...t].map(x=>x===":"?`<span class="co ${c}">:</span>`:`<span class="fl ${c}">${x}</span>`).join("");
 const stp=(t,c)=>`<span class="stp ${c}">${t}</span>`;
-const tc=cur=>`<div class="tcs">${[["s","簡約"],["t","科技"]].map(([v,n])=>`<button class="tc${cur===v?" on":""}" data-act="theme" data-v="${v}"><i class="sw ${v}"></i>${n}</button>`).join("")}</div>`;
-const pls=cur=>`<div class="row"><span>視覺風格</span><div class="pls">${[["s","簡約"],["t","科技"]].map(([v,n])=>`<button class="pl${cur===v?" on":""}" data-act="theme" data-v="${v}">${n}</button>`).join("")}</div></div>`;
+const tc=cur=>`<div class="tcs">${[["r","瑞克箱"],["s","牛皮紙"],["t","科技感"]].map(([v,n])=>`<button class="tc${cur===v?" on":""}" data-act="theme" data-v="${v}"><i class="sw ${v}"></i>${n}</button>`).join("")}</div>`;
+const pls=cur=>`<div class="row"><span>視覺風格</span><div class="pls">${[["r","瑞克箱"],["s","牛皮紙"],["t","科技感"]].map(([v,n])=>`<button class="pl${cur===v?" on":""}" data-act="theme" data-v="${v}">${n}</button>`).join("")}</div></div>`;
 const chooser=note=>`<div style="margin:8px 0"><label>視覺風格</label>${tc(TH())}<div class="sm2">${note}</div></div>`;
 /* ===== 註冊 ===== */
-const onboardS=()=>`<div data-f><h1>歡迎</h1><div class="sm2">第一次使用，請先建立個人資料。</div>${field("name","姓名","text",S.lineName||"")}${field("phone","電話","tel")}${gender("")}${field("birthday","生日","date")}<label><input type="checkbox" name="gcal">連動 Google 行事曆（可略過）</label>${chooser("之後可在「個人資料」更改")}<br><button class="btn" data-act="regStudent">建立資料</button></div>`;
-const onboardC=()=>`<div data-f><h1>教練註冊</h1><label>個人照</label><input name="photo" type="file" accept="image/*">${field("name","姓名")}${field("nick","綽號")}${field("phone","電話","tel")}${gender("")}<label>個人經歷</label><textarea name="bio" rows="4"></textarea><label><input type="checkbox" name="gcal" checked>連動 Google 行事曆</label>${chooser("之後可在「教練資料與設定」更改")}<br><button class="btn" data-act="regCoach">完成註冊</button></div>`;
+const onboardS=()=>`<div data-f>${H("歡迎","先建立你的個人資料。")}<div class="sm2">第一次使用，請先建立個人資料。</div>${field("name","姓名","text",S.lineName||"")}${field("phone","電話","tel")}${gender("")}${field("birthday","生日","date")}<label><input type="checkbox" name="gcal">連動 Google 行事曆（可略過）</label>${chooser("之後可在「個人資料」更改")}<br><button class="btn" data-act="regStudent">建立資料</button></div>`;
+const onboardC=()=>`<div data-f>${H("教練註冊","建立你的教練資料。")}<label>個人照</label><input name="photo" type="file" accept="image/*">${field("name","姓名")}${field("nick","綽號")}${field("phone","電話","tel")}${gender("")}<label>個人經歷</label><textarea name="bio" rows="4"></textarea><label><input type="checkbox" name="gcal" checked>連動 Google 行事曆</label>${chooser("之後可在「教練資料與設定」更改")}<br><button class="btn" data-act="regCoach">完成註冊</button></div>`;
 /* ===== 學員端 ===== */
 function studentView(){
 const s=db.students[S.uid],c=db.coach,pk=stats(S.uid),t=TH();
@@ -148,10 +182,10 @@ const reqs=db.requests.filter(r=>r.sid===S.uid&&r.status==="pending"),now=new Da
 const nextB=next?`<div class="so big">${fmt(next.start)}</div><div class="to"><div class="sm2">NEXT　${md(next.start)}</div>${flap(hm(next.start))}</div><div class="sm2" style="margin-top:4px">${esc(next.place||"待確認")}</div><div class="acts"><a class="btn s g" target="_blank" href="${gcal(next)}">加入行事曆</a>${more.length?`<button class="lk" data-act="more">${S.more?"收合 ˄":"更多已預約 ›"}</button>`:""}</div>`+(S.more?more.map(l=>`<div class="row"><span>${stp("預","b")}　${fmt(l.start)}</span><span>${esc(l.place)}</span></div>`).join(""):""):`<div class="empty">目前沒有已確認的課程</div>`;
 const cells=p=>{let h="";for(let i=0;i<p.total;i++){const k=i<p.used.length?"d":i<p.used.length+p.book?"b":"e";h+=`<div class="cell ${k}"><span>${k=="d"?"完":k=="b"?"預":i+1}</span></div>`}return `<div class="ph"><b>第 ${p.term} 期</b><span>剩 ${p.remain} / 共 ${p.total} 堂</span></div><div class="cells">${cells0(h)}</div>`};
 const cells0=h=>h;
-return `<h1>嗨！${esc(s.name)}</h1>`+
+return H(`嗨！${esc(s.name)}`,"這是你的課程總覽。")+
 blk("me","個人資料",rows([["姓名",esc(s.name)],["電話",esc(s.phone)],["性別",s.gender],["生日",s.birthday||"—"]])+`<div class="row"><span>Google 行事曆連動</span><input type="checkbox" data-act="gcalToggle" ${s.gcal?"checked":""}></div>`+pls(t))+
 (c?blk("coach",`${esc(c.nick||c.name)}教練`,`<div style="display:flex;gap:14px;align-items:center;margin-bottom:8px">${c.photo?`<img class="av" src="${c.photo}" alt="">`:`<div class="av">${esc((c.nick||c.name||"?")[0])}</div>`}<div><b>${esc(c.name)}</b><div class="sm2">${esc(c.nick)}・${c.gender}・${esc(c.phone)}</div></div></div><p style="font-size:14px;margin:0;white-space:pre-line">${esc(c.bio)}</p>`):"")+
-blk("next","最近一堂課",nextB)+
+blk("next","最近一堂課",nextB,"","sel")+
 blk("pk","課程期數",pk.length?pk.map(cells).join("")+`<div class="sm2">扣課從最早的期數開始；<b>預</b>＝已預約，<b>完</b>＝已上完。</div>`:`<div class="empty">尚未購買期數</div>`,`剩 ${remainOf(S.uid)} 堂`)+
 blk("req","預約上課",`<div data-f><div class="sm2">最近 ${db.cfg.maxDays||30} 天內提出 1～3 個想上課的時間，教練確認後才算正式課程。${rule()}</div>`+picker()+`<button class="btn" data-act="req">送出預約</button></div>`+(reqs.length?`<h4>等待教練確認</h4>`+reqs.map(r=>`<div class="row"><span>${r.times.map(fmt).join("<br>")}</span><span class="sm2">待確認</span></div>`).join(""):""))+
 blk("hist","上課紀錄",hist.length?hist.map(l=>`<div class="row"><span>${stp("完","d")}　${fmt(l.start)}</span><span>${esc(l.place)}</span></div>`).join(""):`<div class="empty">還沒有上課紀錄</div>`,hist.length+" 堂");
@@ -178,7 +212,7 @@ return blk("s"+id,esc(s.name),rows([["電話",esc(s.phone)],["性別",s.gender],
 `<div data-f data-sid="${id}"><h4>直接排課</h4>${field("sd","日期","date")}<label>時間</label>${tsel("st","",360,1410,1)}${field("place","地點","text",db.cfg.place)}<button class="btn g" data-act="addLesson">排課</button></div>`+
 `<h4>備注</h4>`+notes.map(n=>`<div class="row"><span>${esc(n.text)}</span><span class="sm2">${new Date(n.ts).toLocaleDateString("zh-TW")}</span></div>`).join("")+`<div data-f data-sid="${id}"><textarea name="text" rows="2" placeholder="新增備注"></textarea><button class="btn g" data-act="addNote">新增備注</button></div>`,`剩 ${remainOf(id)} 堂`)}).join("")||`<div class="empty">還沒有學員。請學員從學員連結進入並建立資料。</div>`;
 const seg=[["d","日"],["w","週"],["m","月"]].map(([k,n])=>`<button class="${S.cv===k?"on":""}" data-act="cv" data-v="${k}">${n}</button>`).join("");
-return `<h1>${esc(c.nick||c.name)}教練</h1><div class="seg">${seg}</div>${cal}`+
+return H(`${esc(c.nick||c.name)}教練`,"你的課程與學員。")+`<div class="seg">${seg}</div>${cal}`+
 blk("req","約課申請",reqB,pend.length?`<span class="badge">${pend.length}</span>`:"")+blk("stu","我的學員",stu,Object.keys(db.students).length+" 人")+blk("cfg","預約設定",cfgB())+
 blk("prof","教練資料與設定",`<div data-f>${field("name","姓名","text",c.name)}${field("nick","綽號","text",c.nick)}${field("phone","電話","tel",c.phone)}<label>個人經歷</label><textarea name="bio" rows="4">${esc(c.bio)}</textarea><label>個人照</label><input name="photo" type="file" accept="image/*">${field("place","預設上課地點","text",db.cfg.place)}<label><input type="checkbox" name="gcal" ${c.gcal?"checked":""}>Google 行事曆連動</label>${pls(TH())}<br><button class="btn" data-act="saveCoach">儲存</button></div>`);
 }
@@ -207,8 +241,8 @@ if(a==="cv"){S.cv=b.dataset.v;return render()}
 if(a==="goto"){S.cd=new Date(b.dataset.d);S.cv="d";return render()}
 if(a==="nav"){const v=+b.dataset.v,x=new Date(S.cd);if(S.cv==="d")x.setDate(x.getDate()+v);else if(S.cv==="w")x.setDate(x.getDate()+7*v);else{x.setDate(1);x.setMonth(x.getMonth()+v)}S.cd=x;return render()}
 const need=(...k)=>k.every(x=>d[x])||(alert("請填寫完整"),false);
-if(a==="regStudent"){if(!need("name","phone","birthday"))return;db.students[S.uid]={name:d.name,phone:d.phone,gender:d.gender,birthday:d.birthday,gcal:d.gcal,theme:S.tmp||"s"};FIRST=true}
-if(a==="regCoach"){if(!need("name","phone"))return;db.coach={uid:S.uid,name:d.name,nick:d.nick,phone:d.phone,gender:d.gender,bio:d.bio,gcal:d.gcal,theme:S.tmp||"s",photo:await photoOf(f.querySelector("[name=photo]").files[0])};FIRST=true}
+if(a==="regStudent"){if(!need("name","phone","birthday"))return;db.students[S.uid]={name:d.name,phone:d.phone,gender:d.gender,birthday:d.birthday,gcal:d.gcal,theme:S.tmp||"r"};FIRST=true}
+if(a==="regCoach"){if(!need("name","phone"))return;db.coach={uid:S.uid,name:d.name,nick:d.nick,phone:d.phone,gender:d.gender,bio:d.bio,gcal:d.gcal,theme:S.tmp||"r",photo:await photoOf(f.querySelector("[name=photo]").files[0])};FIRST=true}
 if(a==="saveCoach"){const p=await photoOf(f.querySelector("[name=photo]").files[0]);Object.assign(db.coach,{name:d.name,nick:d.nick,phone:d.phone,bio:d.bio,gcal:d.gcal});if(p)db.coach.photo=p;db.cfg.place=d.place}
 if(a==="req"){const t=[];for(const i of[1,2,3]){const dd=d["d"+i],hh=d["h"+i];if(dd&&hh)t.push(new Date(dd+"T"+hh).toISOString());else if(hh||(dd&&!d.same))return alert("志願 "+i+" 的日期和時間要一起選")}
 if(!t.length)return alert("請至少選 1 個時段");if(new Set(t).size<t.length)return alert("時段不可重複");if(t.some(x=>!okSlot(x)))return alert("所選時段目前不開放，請重新選擇");db.requests.push({id:rid(),sid:S.uid,times:t,status:"pending"})}
