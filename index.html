@@ -79,7 +79,7 @@ summary{min-height:52px;display:flex;align-items:center;gap:8px;font-weight:800;
 .tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:#fff;border-top:1px solid var(--ln);padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:5}
 .tabs button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:var(--sub)}.tabs button span{width:52px;height:30px;border-radius:99px;display:flex;align-items:center;justify-content:center;position:relative}
 .tabs button.on{color:var(--g)}.tabs button.on span{background:var(--gl)}.dotr{position:absolute;top:2px;right:12px;width:8px;height:8px;border-radius:50%;background:var(--rd)}
-a{color:var(--g)}input[type=date],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:48px}
+.ver{text-align:center;font-size:11px;color:var(--sub);margin:18px 0 0}a{color:var(--g)}input[type=date],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:48px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.chp{border:1px solid var(--ln);background:#fff;border-radius:99px;padding:6px 14px;font-weight:700}.chp.on{background:var(--gl);border-color:var(--gb);color:var(--g)}
 .pdef{font-style:normal;margin-left:8px;font-size:11px;background:var(--gl);color:var(--g);border-radius:99px;padding:1px 8px;font-weight:700}.acts2{display:flex;gap:4px;align-items:center}
 .back{display:flex;align-items:center;gap:2px;background:none;border:0;color:var(--g);font-weight:800;padding:4px 0;margin-bottom:2px}
@@ -103,6 +103,7 @@ window.addEventListener("error",e=>__show((e.message||"error")+" (line "+(e.line
 window.addEventListener("unhandledrejection",e=>__show((e.reason&&e.reason.message)||e.reason));
 </script>
 <script>
+const BUILD="2026-10-20.4";
 const CONFIG={LIFF_ID:"2011857437-xFUbKdAg"};
 /* 資料層：目前存在本機瀏覽器；上線請把 load/save 換成 Supabase / Firebase */
 const blank=()=>({coach:null,students:{},packages:[],lessons:[],requests:[],notes:[],cfg:{maxDays:30,place:""}});
@@ -285,7 +286,7 @@ let h,tabs=null,pend=false;
 if(S.coachMode){if(!db.coach)h=onboardC();else if(db.coach.uid!==S.uid)h=brand("教練區")+`<div class="card"><h1>無法進入</h1><p class="sm2">這個連結只提供教練使用。</p></div>`;else{S.tab=S.tab||"sch";h=S.log?brand("教練區")+logPage():coachBody();tabs=CT;pend=db.requests.some(r=>r.status==="pending")}}
 else if(!db.students[S.uid])h=onboardS();else{S.tab=S.tab||"home";h=S.log?brand("學員區")+logPage():studentBody();tabs=ST}
 if(S.demo)h+=`<footer>示範模式（資料只存在這支瀏覽器）<br><a href="?">學員視角</a>・<a href="?role=coach">教練視角</a>・<a href="#" data-act="newStu">換成新學員</a>・<a href="#" data-act="reset">清除資料</a></footer>`;
-app.innerHTML=h+(tabs?tabBar(tabs,pend):"");
+app.innerHTML=h+`<p class="ver">動滋 · 版本 ${BUILD}</p>`+(tabs?tabBar(tabs,pend):"");
 document.querySelectorAll("details").forEach(d=>{if(open.has(d.dataset.k))d.open=true});
 }
 /* ===== 事件 ===== */
@@ -393,6 +394,9 @@ const p=await liff.getProfile();S.uid=p.userId;S.lineName=p.displayName;
 if(!S.uid)S.uid=new URLSearchParams(location.search).get("uid")||localStorage.cb_uid||(localStorage.cb_uid="U"+rid());
 step("載入畫面…");
 render();
+/* 偵測到網站有新版本時自動重新載入一次（避免 LINE / 瀏覽器快取舊檔） */
+try{fetch(location.pathname,{cache:"no-store"}).then(r=>r.text()).then(t=>{const m=t.match(/const BUILD="([^"]+)"/);if(!m)return;if(m[1]===BUILD){sessionStorage.removeItem("cb_rl");return}
+if(sessionStorage.getItem("cb_rl")==="1")return;sessionStorage.setItem("cb_rl","1");const u=new URL(location.href);u.searchParams.set("_v",Date.now());location.replace(u.toString())}).catch(()=>{})}catch(e){}
 })();
 </script>
 </body>
