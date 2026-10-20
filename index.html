@@ -89,6 +89,9 @@ a{color:var(--g)}input[type=date],input[type=datetime-local]{-webkit-appearance:
 button.hrow{width:100%;background:none;border:0;border-top:1px solid var(--ln);text-align:left}button.hrow:first-child{border-top:0}.hrow b{font-weight:700}.hrow .ic{color:var(--sub);flex:none}
 .dy em{font-style:normal;font-size:10px;color:var(--rd)}.locl select{margin:0;border:0;background:none;padding:6px 0;font-size:14px;flex:1;color:var(--tx)}
 .tm{width:48%!important}
+.dt2{display:grid;grid-template-columns:1fr 24px 1fr;gap:8px;align-items:center;margin-bottom:12px}.dt2 select{margin:0;min-height:48px}.dt2 span{text-align:center;color:var(--sub)}
+.ck2{display:inline-flex;align-items:center;gap:4px;font-size:15px;color:var(--tx)}.stepr{margin:2px 0 14px;font-size:15px}.shs{font-size:13px;color:var(--sub);margin:4px 0 6px;font-weight:700}.sh{font-size:17px;font-weight:800;margin:6px 0 8px}
+.mk{display:flex;gap:3px;justify-content:center;align-items:center;min-height:16px;margin-top:2px}.ct{font-style:normal;font-size:10px;font-weight:800;background:var(--gl);color:var(--g);border-radius:99px;padding:0 6px}.dy.on .ct{background:#fff}.dy.on em{color:#fff}
 footer{margin:24px 0;text-align:center;font-size:13px;color:var(--sub)}
 </style>
 </head>
@@ -122,7 +125,7 @@ function stats(sid){let done=db.lessons.filter(l=>l.sid===sid&&l.status==="done"
 return db.packages.filter(p=>p.sid===sid).map(p=>{const used=done.slice(0,p.total);done=done.slice(p.total);const book=Math.min(p.total-used.length,sc);sc-=book;return{...p,used,book,remain:p.total-used.length}})}
 const remainOf=sid=>stats(sid).reduce((n,p)=>n+p.remain,0);
 /* ===== 預約規則：開放時段、固定不可約、休假日 ===== */
-let LEN=+((db.cfg&&db.cfg.len)||60);const syncLen=()=>{LEN=+db.cfg.len||60},cfg=()=>Object.assign({open:"08:00",close:"22:00",blocks:[],offWd:[],offDates:[],len:60,places:[],defPlace:""},db.cfg);
+let LEN=+((db.cfg&&db.cfg.len)||60);const syncLen=()=>{LEN=+db.cfg.len||60},cfg=()=>Object.assign({open:"08:00",close:"22:00",blocks:[],offWd:[],offDates:[],len:60,step:30,places:[],defPlace:""},db.cfg);
 (()=>{const c=db.cfg=db.cfg||{};if(!c.places){c.places=c.place?[{id:rid(),name:c.place}]:[];c.defPlace=c.places[0]?c.places[0].id:""}syncLen()})();
 const PL=()=>cfg().places,defPlace=()=>{const p=PL(),d=p.find(x=>x.id===cfg().defPlace)||p[0];return d?d.name:(db.cfg.place||"")};
 const stuPlace=sid=>{const u=db.students[sid],p=u&&u.place&&PL().find(x=>x.id===u.place);return p?p.name:defPlace()};
@@ -131,7 +134,7 @@ const tm=s=>{const[a,b]=s.split(":");return +a*60+ +b},fm=m=>p2(Math.floor(m/60)
 const ymd=d=>`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
 function slots(ds){const c=cfg(),d=new Date(ds+"T00:00"),w=d.getDay();if(c.offDates.includes(ds)||c.offWd.includes(w))return[];
 const busy=db.lessons.filter(l=>l.status==="scheduled"&&sameD(l.start,d)).map(l=>{const x=new Date(l.start);return[x.getHours()*60+x.getMinutes(),l.len||LEN]}),n=new Date(),nowM=sameD(d,n)?n.getHours()*60+n.getMinutes():-1,o=[];
-for(let m=tm(c.open);m<=tm(c.close)-LEN;m+=30){if(m<=nowM)continue;
+for(let m=tm(c.open);m<=tm(c.close)-LEN;m+=(+c.step||30)){if(m<=nowM)continue;
 if(c.blocks.some(b=>(b.wd==="*"||+b.wd===w)&&m<tm(b.to)&&m+LEN>tm(b.from)))continue;
 if(busy.some(([x,y])=>m<x+y&&m+LEN>x))continue;o.push(fm(m))}return o}
 const okSlot=iso=>{const x=new Date(iso);return slots(ymd(x)).includes(hm(x))};
@@ -141,7 +144,7 @@ function picker(){const D=[];for(let i=0;i<=(db.cfg.maxDays||30);i++){const d=ne
 if(!D.length)return `<div class="empty">目前沒有可預約的日期，請聯絡教練。</div>`;
 return `<label style="color:var(--tx);font-size:14px"><input type="checkbox" name="same">預約同天（3 個志願用同一天，只需選時間）</label>`+[1,2,3].map(i=>`<label>志願 ${i}</label><div class="dt"><select name="d${i}"><option value="">日期</option>${D.map(([v,n])=>`<option value="${v}">${n}</option>`).join("")}</select><select name="h${i}"><option value="">時間</option></select></div>`).join("")}
 function cfgB(){const c=cfg(),O=[1,2,3,4,5,6,0];
-return `<div class="card"><div data-f><h4 style="margin-top:0">開放預約時段</h4><div class="dt">${tsel("open",c.open,0,1440)}<span>–</span>${tsel("close",c.close,0,1440)}</div><div class="sm2">學員只能選這個範圍內的時間（每 30 分鐘一個時段，每堂 ${LEN} 分鐘）。</div>${field("maxDays","學員可預約的天數上限","number",db.cfg.maxDays||30,'min="1" max="365"')}<h4>每週固定休假日</h4><div style="display:flex;flex-wrap:wrap;gap:6px 14px">${O.map(w=>`<label style="font-size:14px;color:var(--tx)"><input type="checkbox" name="wd${w}" ${c.offWd.includes(w)?"checked":""}>週${WD[w]}</label>`).join("")}</div><br><button class="btn" data-act="saveCfg">儲存</button></div></div>`+
+return `<div class="card"><div data-f><h4 style="margin-top:0">開放預約時段</h4><div class="dt2">${tsel("open",c.open,0,1440)}<span>–</span>${tsel("close",c.close,0,1440)}</div><div class="stepr">每 <label class="ck2"><input type="checkbox" name="stp30" ${c.step!==60?"checked":""}>30</label> / <label class="ck2"><input type="checkbox" name="stp60" ${c.step===60?"checked":""}>60</label> 分鐘一個時段</div><div class="shs">學員可預約的天數上限</div><div class="dt2"><select name="maxDays">${[...new Set([7,14,30,45,60,90,+(db.cfg.maxDays||30)])].sort((a,b)=>a-b).map(v=>`<option value="${v}"${v===+(db.cfg.maxDays||30)?" selected":""}>${v}</option>`).join("")}</select><span>天</span><span></span></div><h4>每週固定休假日</h4><div style="display:flex;flex-wrap:wrap;gap:6px 14px">${O.map(w=>`<label style="font-size:14px;color:var(--tx)"><input type="checkbox" name="wd${w}" ${c.offWd.includes(w)?"checked":""}>週${WD[w]}</label>`).join("")}</div><br><button class="btn" data-act="saveCfg">儲存</button></div></div>`+
 `<div class="card"><h4 style="margin-top:0">固定不可約時段</h4>`+(c.blocks.map(b=>`<div class="row"><span>${b.wd==="*"?"每天":"週"+WD[b.wd]}　${b.from}–${b.to}</span><button class="lk" data-act="delBlock" data-bid="${b.id}">刪除</button></div>`).join("")||`<div class="empty">尚未設定</div>`)+
 `<div data-f><div class="dt"><select name="bwd"><option value="*">每天</option>${O.map(w=>`<option value="${w}">週${WD[w]}</option>`).join("")}</select>${tsel("bfrom","12:00",0,1440)}<span>–</span>${tsel("bto","13:00",0,1440)}</div><br><button class="btn g" data-act="addBlock">新增不可約時段</button></div></div>`+
 `<div class="card"><h4 style="margin-top:0">指定休假日</h4>`+(c.offDates.map(x=>`<div class="row"><span>${x}　週${WD[new Date(x+"T00:00").getDay()]}</span><button class="lk" data-act="delOff" data-od="${x}">刪除</button></div>`).join("")||`<div class="empty">尚未設定</div>`)+
@@ -168,19 +171,22 @@ const hello=(t,s,av)=>`<div class="hello"><div><h1>${t}</h1><p>${s}</p></div><di
 const avatar=(c,sz="")=>c.photo?`<img class="av ${sz}" src="${c.photo}" alt="">`:`<div class="av ${sz}">${esc((c.nick||c.name||"?")[0])}</div>`;
 const mrow=(i,t,r,tab)=>`<button class="mrow" data-act="tab" data-v="${tab}"><span class="mi">${ic(i,20)}</span><b>${t}</b><small>${r}</small>${ic("chev",16)}</button>`;
 const tabBar=(T,pend)=>`<nav class="tabs">${T.map(([k,n,i])=>`<button class="${S.tab===k?"on":""}" data-act="tab" data-v="${k}"><span>${ic(i,22)}${k==="req"&&pend?'<i class="dotr"></i>':""}</span>${n}</button>`).join("")}</nav>`;
-const pkName=p=>p.free?"試上／免費":`第 ${p.term} 期`;
+const pkName=p=>p.kind==="special"?"特別課程":(p.kind==="trial"||p.free)?"試上課程":`第 ${p.term} 期`,pkTitle=p=>(p.kind||p.free)?pkName(p):`第 ${p.term} 期課程`;
 const hasLog=l=>!!(l.log&&(l.log.text||(l.log.photos&&l.log.photos.length)));
 const shrink=(file,mx=820)=>new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.72))};im.onerror=()=>res(null);im.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)});
 const copyText=async t=>{try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(_){}a.remove()}};
-const logText=l=>{const c=db.coach;return `【${c?(c.nick||c.name)+"教練 ":""}上課紀錄】\n${db.students[l.sid]?.name||""}　${fmt(l.start)}\n地點：${l.place||"—"}\n\n${(l.log&&l.log.text)||"（未填寫上課內容）"}`};
+const logText=l=>{const x=new Date(l.start);return `【${x.getFullYear()}/${p2(x.getMonth()+1)}/${p2(x.getDate())}(${WD[x.getDay()]})${hm(x)}課程紀錄】\n${(l.log&&l.log.text)||"（未填寫上課內容）"}`};
 const TIMES=(()=>{const o=[];for(let m=360;m<=1410;m+=30)o.push(fm(m));return o})();
 function issues(ds,t){const c=cfg(),d=new Date(ds+"T00:00"),w=d.getDay(),m=tm(t),o=[];
 if(c.offDates.includes(ds)||c.offWd.includes(w))o.push("休息日");
 if(m<tm(c.open)||m+LEN>tm(c.close))o.push("非開放時段");
 if(c.blocks.some(b=>(b.wd==="*"||+b.wd===w)&&m<tm(b.to)&&m+LEN>tm(b.from)))o.push("固定不可約時段");
-const bz=db.lessons.find(l=>{if(l.status!=="scheduled"||!sameD(l.start,d))return false;const x=new Date(l.start),s0=x.getHours()*60+x.getMinutes();return m<s0+(l.len||LEN)&&m+LEN>s0});
-if(bz)o.push("已有課程（"+(db.students[bz.sid]?.name||"")+"）");return o}
-const ST=[["home","課程","grid"],["book","預約","calp"],["hist","紀錄","bars"],["me","我的","user"]],CT=[["sch","課表","cal"],["req","申請","inbox"],["stu","學員","users"],["cfg","預約設定","gear"],["me","我的","user"]];
+let ex=null,ov=null;for(const l of db.lessons){if(l.status!=="scheduled"||!sameD(l.start,d))continue;const x=new Date(l.start),s0=x.getHours()*60+x.getMinutes();if(s0===m)ex=ex||l;else if(m<s0+(l.len||LEN)&&m+LEN>s0)ov=ov||l}
+const nm=l=>db.students[l.sid]?.name||"";
+if(ex)o.push("已有課程（"+nm(ex)+"）");
+if(ov){const x=new Date(ov.start),s0=x.getHours()*60+x.getMinutes();o.push("強碰（"+nm(ov)+" "+fm(s0)+"–"+fm(s0+(ov.len||LEN))+"）")}
+return o}
+const ST=[["home","課程","grid"],["book","預約","calp"],["hist","紀錄","bars"],["me","我的","user"]],CT=[["sch","課表","cal"],["req","課程安排","inbox"],["stu","學員","users"],["cfg","預約設定","gear"],["me","我的","user"]];
 /* ===== 註冊 ===== */
 const onboardS=()=>brand("學員區")+`<div data-f class="card"><h1>歡迎！</h1><p class="sm2">第一次使用，請先建立個人資料。</p>${field("name","姓名","text",S.lineName||"")}${field("phone","電話","tel")}${gender("")}${field("birthday","生日","date")}<label class="ck"><input type="checkbox" name="gcal">連動 Google 行事曆（可略過）</label><button class="btn" data-act="regStudent">建立資料</button></div>`;
 const onboardC=()=>brand("教練區")+`<div data-f class="card"><h1>教練註冊</h1><label>個人照</label><input name="photo" type="file" accept="image/*">${field("name","姓名")}${field("nick","綽號")}${field("phone","電話","tel")}${gender("")}<label>個人經歷（可換行）</label><textarea name="bio" rows="4"></textarea><label class="ck"><input type="checkbox" name="gcal" checked>連動 Google 行事曆</label><button class="btn" data-act="regCoach">完成註冊</button></div>`;
@@ -190,7 +196,7 @@ const histL=()=>db.lessons.filter(l=>l.sid===S.uid&&l.status==="done").sort((a,b
 function pkCard(p){const n=p.total,dn=p.used.length,bk=p.book,big=n>20,all=S.exp[p.id],from=big&&!all?Math.max(0,Math.floor(dn/5)*5-5):0,to=big&&!all?Math.min(n,Math.ceil((dn+bk+1)/5)*5+5):n;let h=from>0?`<div class="cm">⋯ 前面 ${from} 堂已上完</div>`:"";
 for(let i=from;i<to;i++){const k=i<dn?"d":i<dn+bk?"b":"e";h+=`<div class="nd ${k}">${k=="d"?ic("check",24):k=="b"?ic("star",22):i+1}</div>`}
 if(to<n)h+=`<div class="cm">⋯ 後面還有 ${n-to} 堂</div>`;
-return `<div class="card"><div class="ch"><div><b>課程期數</b><small>${pkName(p)}</small></div><span class="g">剩 ${p.remain} / 共 ${n} 堂</span></div><div class="nds">${h}</div>${big?`<button class="lk" data-act="expcells" data-pid="${p.id}">${all?"收合":"顯示全部 "+n+" 堂"}</button>`:""}<div class="pt">已完成 ${Math.round(dn/n*100)}%，穩穩向目標前進！</div></div>`}
+return `<div class="card"><div class="ch"><div><b>${pkTitle(p)}</b></div><span class="g">剩 ${p.remain} / 共 ${n} 堂</span></div><div class="nds">${h}</div>${big?`<button class="lk" data-act="expcells" data-pid="${p.id}">${all?"收合":"顯示全部 "+n+" 堂"}</button>`:""}<div class="pt">已完成 ${Math.round(dn/n*100)}%，穩穩向目標前進！</div></div>`}
 function sHome(){const s=db.students[S.uid],c=db.coach,pk=stats(S.uid),mine=mineL(),next=mine[0],more=mine.slice(1),hist=histL(),rem=remainOf(S.uid);
 let nx;if(next){const st=new Date(next.start),en=new Date(+st+(next.len||LEN)*6e4);
 nx=`<div class="dk"><div class="dkh"><span>最近一堂課</span><i class="pill2">已確認預約</i></div><div class="dkb"><div class="dbox"><small>${st.getMonth()+1} 月</small><b>${st.getDate()}</b></div><div><div class="dsub">週${WD[st.getDay()]}</div><div class="dtime">${hm(st)} – ${hm(en)}</div><div class="dloc">${ic("pin",14)} ${esc(next.place||"地點待確認")}</div></div></div><a class="wbtn" target="_blank" href="${gcal(next)}">${ic("calp",18)}加入行事曆</a>`+(more.length?`<button class="dfoot" data-act="more"><span>另有 ${more.length} 堂已預約 · ${md(more[0].start)} ${hm(more[0].start)}</span>${ic(S.more?"up":"chev",16)}</button>`+(S.more?more.map(l=>`<div class="drow"><span>${fmt(l.start)}</span><span>${esc(l.place)}</span></div>`).join(""):""):"")+`</div>`}
@@ -198,7 +204,7 @@ else nx=`<div class="dk"><div class="dkh"><span>最近一堂課</span></div><p c
 return hello(`嗨，${esc(s.name)}！`,"每一次出發，都在累積更好的自己。",`<div class="avs">${esc(s.name[0])}</div>`.replace('<div class="avs">','<span>').replace('</div>','</span>'))+
 `<div class="stats"><div><b class="g">${hist.length}</b><span>已上</span></div><div><b class="bl">${mine.length}</b><span>預約</span></div><div><b>${rem}</b><span>剩堂</span></div></div>`+nx+
 `<button class="btn big" data-act="tab" data-v="book">預約上課 ${ic("calp",20)}</button><p class="cap">剩餘 ${rem} 堂含 ${mine.length} 堂已預約，還可安排 ${Math.max(0,rem-mine.length)} 堂</p>`+
-(pk.length?pk.map(pkCard).join(""):`<div class="card empty">尚未購買期數</div>`)+
+((()=>{const ac=pk.filter(p=>p.remain>0);return ac.length?ac.map(pkCard).join(""):`<div class="card empty">${pk.length?"目前沒有進行中的期數，請聯絡教練續約":"尚未購買期數"}</div>`})())+
 (c?`<button class="card crow" data-act="tab" data-v="me">${avatar(c,"sm")}<div><b>${esc(c.nick||c.name)}教練</b></div>${ic("chev",16)}</button>`:"")}
 function bkInit(){if(S.bk)return;const r=db.requests.find(x=>x.sid===S.uid&&x.status==="pending"),d=["","",""],t=["","",""];if(r)r.times.slice(0,3).forEach((x,i)=>{d[i]=ymd(new Date(x));t[i]=hm(x)});const same=!!r&&r.times.length>1&&new Set(d.filter(Boolean)).size===1;if(same)d.fill(d.find(Boolean));S.bk={same,act:0,d,t,ws:0}}
 function sBook(){bkInit();const B=S.bk,r=db.requests.find(x=>x.sid===S.uid&&x.status==="pending"),c=cfg(),mx=db.cfg.maxDays||30,A=[];const show=!r||S.bkEdit;
@@ -212,7 +218,7 @@ return brand("學員區")+`<h1 class="pg">下一次，想什麼時候練？</h1>
 (r?`<div class="card inf"><span class="mi">${ic("clock",20)}</span><div><b>申請已送出，等待教練確認</b><div class="wl">${r.times.map((x,i)=>`<div><span>第${"一二三"[i]}志願</span><b>${fmt(x)}</b></div>`).join("")}</div></div><button class="ebtn" data-act="bkedit">${S.bkEdit?"取消修改":"修改"}</button></div>`:"")+
 (show?`<div class="ymrow"><b>${win[0]?win[0].d.getFullYear()+" 年 "+(win[0].d.getMonth()+1)+" 月":""}</b><span><button data-act="bkw" data-v="-1" aria-label="前一週">${ic("left",18)}</button><button data-act="bkw" data-v="1" aria-label="後一週">${ic("chev",18)}</button></span></div><div class="strip">${strip}</div><p class="sm2">可選未來 ${mx} 天：${md(A[0].d).split(" ")[0]}–${md(A[A.length-1].d).split(" ")[0]}</p>`+
 `<div class="sec"><b>你的上課志願</b><span class="g">已選 ${n} / 3</span></div><label class="ck"><input type="checkbox" name="same" ${B.same?"checked":""}>預約同天，三個志願使用同一日期</label>${wish}`+
-`<div class="card inf"><span class="mi">${ic("clock",18)}</span><div><b>每堂 ${LEN} 分鐘 · 每 30 分鐘一個開始時段</b><small>每日 ${c.open}–${c.close} 開放，最晚 ${fm(tm(c.close)-LEN)} 開課。${wk}${od.length?"指定休假日："+od.map(x=>x.slice(5).replace("-","/")).join("、")+"。":""}</small></div></div>`+
+`<div class="card inf"><span class="mi">${ic("clock",18)}</span><div><b>每堂 ${LEN} 分鐘 · 每 ${c.step||30} 分鐘一個開始時段</b><small>每日 ${c.open}–${c.close} 開放，最晚 ${fm(tm(c.close)-LEN)} 開課。${wk}${od.length?"指定休假日："+od.map(x=>x.slice(5).replace("-","/")).join("、")+"。":""}</small></div></div>`+
 `<button class="btn big" data-act="req">${r?"更新約課申請":"送出約課申請"} ${ic("send",20)}</button><p class="cap">${r?"修改志願後，仍需等待教練確認":"送出後，等待教練確認其中一個時段"}</p>`:"")}
 function sHist(){const pk=stats(S.uid),h=histL(),seen=new Set();pk.forEach(p=>p.used.forEach(l=>seen.add(l.id)));const rest=h.filter(l=>!seen.has(l.id));
 const row=l=>`<button class="hrow" data-act="openlog" data-id="${l.id}"><span class="hck">${ic("check",16)}</span><b>${fmt(l.start)}</b><small>${esc(l.place)}${hasLog(l)?" · 有紀錄":""}</small>${ic("chev",14)}</button>`;
@@ -228,10 +234,10 @@ function stuList(){const e=Object.entries(db.students);return e.length?`<div cla
 function stuPage(id){const u=db.students[id],pk=stats(id),notes=db.notes.filter(n=>n.sid===id).sort((a,b)=>b.ts-a.ts);
 const lrow=l=>`<button class="hrow" data-act="openlog" data-id="${l.id}"><span class="hck">${ic("check",16)}</span><b>${fmt(l.start)}</b><small>${hasLog(l)?"有紀錄":"上課紀錄"}</small>${ic("chev",14)}</button>`;
 return brand("教練區")+`<button class="back" data-act="stuback">${ic("left",18)}我的學員</button><h1 class="pg">${esc(u.name)}</h1><p class="sub">剩 ${remainOf(id)} 堂</p>`+
-`<div class="card"><h4 style="margin-top:0">基本資料</h4>${rows([["電話",esc(u.phone)],["性別",u.gender],["生日",u.birthday||"—"]])}</div>`+
+`<div class="card" data-f data-sid="${id}"><h4 style="margin-top:0">基本資料</h4>${field("name","姓名","text",u.name)}${field("phone","電話","tel",u.phone)}${gender(u.gender)}${field("birthday","生日","date",u.birthday||"")}<button class="btn g" data-act="saveStu">儲存資料</button></div>`+
 `<div class="card"><h4 style="margin-top:0">預設上課地點</h4>${PL().length?`<select name="sp" data-sid="${id}"><option value="">跟隨教練預設（${esc(defPlace()||"未設定")}）</option>${PL().map(p=>`<option value="${p.id}"${u.place===p.id?" selected":""}>${esc(p.name)}</option>`).join("")}</select>`:`<p class="sm2">請先到「預約設定」新增上課場地。</p>`}</div>`+
 `<div class="card"><h4 style="margin-top:0">課程期數</h4>${pk.slice().reverse().map(p=>blk("p"+p.id,pkName(p),rows([["教練費","$"+p.fee],["付款日期",p.paid],["付款方式",esc(p.method)]])+(p.used.length?p.used.slice().reverse().map(lrow).join(""):`<div class="empty">尚未上課</div>`),`剩 ${p.remain}/${p.total}`)).join("")||`<div class="empty">尚無期數</div>`}</div>`+
-`<div class="card" data-f data-sid="${id}"><h4 style="margin-top:0">新增期數</h4>${field("fee","教練費","number")}${field("total","堂數","number")}${field("paid","付款日期","date",loc(new Date()).slice(0,10))}${field("method","付款方式","text","轉帳")}<label class="ck"><input type="checkbox" name="free">試上／免費（不計入期數）</label><p class="sm2" style="margin:6px 0 10px">勾選後不佔用期數編號，下一次新增期數仍接續原本的期數。</p><button class="btn" data-act="addPkg">新增期數</button></div>`+
+`<div class="card" data-f data-sid="${id}"><h4 style="margin-top:0">新增期數</h4>${field("fee","教練費","number")}${field("total","堂數","number")}${field("paid","付款日期","date",loc(new Date()).slice(0,10))}${field("method","付款方式","text","轉帳")}<label class="ck"><input type="checkbox" name="trial">試上課程</label><label class="ck"><input type="checkbox" name="special">特別課程</label><p class="sm2" style="margin:6px 0 10px">試上課/特別課皆不列入期數計算</p><button class="btn" data-act="addPkg">新增期數</button></div>`+
 `<div class="card"><h4 style="margin-top:0">備注</h4>${notes.map(n=>`<div class="nrow"><span>${esc(n.text)}<br><small>${new Date(n.ts).toLocaleDateString("zh-TW")}</small></span><button class="lk r" data-act="delNote" data-nid="${n.id||n.ts}">刪除</button></div>`).join("")||`<div class="empty">還沒有備注</div>`}<div data-f data-sid="${id}"><textarea name="text" rows="2" placeholder="新增備注"></textarea><button class="btn g" data-act="addNote">新增備注</button></div></div>`}
 function logPage(){const l=db.lessons.find(x=>x.id===S.log.id);if(!l)return"";const co=S.coachMode,ed=co&&S.log.edit,lg=l.log||{},ph=S.log.ph||lg.photos||[],tx=S.log.text!==undefined?S.log.text:(lg.text||"");
 const who=co?sn0(l.sid):esc((db.coach&&(db.coach.nick||db.coach.name))||"")+"教練";
@@ -240,14 +246,14 @@ const back=`<button class="back" data-act="logback">${ic("left",18)}返回</butt
 if(ed)return back+info+`<div class="card" data-f data-id="${l.id}"><h4 style="margin-top:0">上課內容</h4><textarea name="text" rows="6" placeholder="今天的訓練重點、動作調整、下次目標…">${esc(tx)}</textarea><h4>照片（最多 6 張）</h4><div class="phs">${ph.map((u,i)=>`<div class="ph"><img src="${u}" alt=""><button data-act="rmphoto" data-i="${i}" aria-label="移除照片">×</button></div>`).join("")}</div><input name="photos" type="file" accept="image/*" multiple><div class="rqb"><button class="btn" data-act="savelog">儲存</button><button class="lk" data-act="cancellog">取消</button></div></div>`;
 return back+info+`<div class="card"><h4 style="margin-top:0">上課內容</h4><p class="bio" style="margin:0">${lg.text?esc(lg.text):"教練尚未填寫上課內容"}</p>${(lg.photos||[]).length?`<div class="pgrid">${lg.photos.map(u=>`<img src="${u}" alt="上課照片">`).join("")}</div>`:""}</div><div class="rqb"><button class="btn g" data-act="copylog">${ic("note",18)}複製</button><button class="btn g" data-act="sharelog">${ic("send",18)}分享</button>${co?`<button class="btn" data-act="editlog">編輯</button>`:""}</div>`}
 function schPage(){const B=S.sch,st=Object.entries(db.students),A=[];for(let i=0;i<=60;i++){const x=new Date();x.setDate(x.getDate()+i);A.push({ds:ymd(x),d:x})}
-const win=A.slice(B.ws,B.ws+7),off=ds=>cfg().offDates.includes(ds)||cfg().offWd.includes(new Date(ds+"T00:00").getDay());
-const strip=win.map(a=>`<button class="dy${a.ds===B.d?" on":""}" data-act="schday" data-d="${a.ds}"><small>${WD[a.d.getDay()]}</small><b>${a.d.getDate()}</b>${off(a.ds)?"<em>休</em>":""}</button>`).join("");
-const tag=t=>{const i=B.d?issues(B.d,t):[];return i.length?"（"+i.map(x=>x.startsWith("已有")?"已排課":x==="非開放時段"?"非開放":x==="固定不可約時段"?"不可約":x).join("、")+"）":""};
-return brand("教練區")+`<button class="back" data-act="schback">${ic("left",18)}約課申請</button><h1 class="pg">排課</h1><p class="sub">為學員直接安排一堂課。</p>`+
-`<div class="card"><label>學員</label><select name="ssid"><option value="">選擇學員</option>${st.map(([id,u])=>`<option value="${id}"${id===B.sid?" selected":""}>${esc(u.name)}</option>`).join("")}</select>`+
+const win=A.slice(B.ws,B.ws+7),off=ds=>cfg().offDates.includes(ds)||cfg().offWd.includes(new Date(ds+"T00:00").getDay()),nc=ds=>db.lessons.filter(l=>l.status==="scheduled"&&sameD(l.start,ds+"T00:00")).length;
+const strip=win.map(a=>`<button class="dy${a.ds===B.d?" on":""}" data-act="schday" data-d="${a.ds}"><small>${WD[a.d.getDay()]}</small><b>${a.d.getDate()}</b><span class="mk">${off(a.ds)?"<em>休</em>":""}${nc(a.ds)?`<i class="ct">${nc(a.ds)}</i>`:""}</span></button>`).join("");
+const tag=t=>{const i=B.d?issues(B.d,t):[];return i.length?"（"+i.map(x=>x.startsWith("已有")?"已排課":x.startsWith("強碰")?"強碰":x==="非開放時段"?"非開放":x==="固定不可約時段"?"不可約":x).join("、")+"）":""};
+return brand("教練區")+`<button class="back" data-act="schback">${ic("left",18)}課程安排</button><h1 class="pg">排課</h1><p class="sub">為學員直接安排一堂課。</p>`+
+`<div class="card"><div class="sh">學員</div><select name="ssid"><option value="">選擇學員</option>${st.map(([id,u])=>`<option value="${id}"${id===B.sid?" selected":""}>${esc(u.name)}</option>`).join("")}</select>`+
 `<div class="ymrow"><b>${win[0].d.getFullYear()} 年 ${win[0].d.getMonth()+1} 月</b><span><button data-act="schw" data-v="-1" aria-label="前一週">${ic("left",18)}</button><button data-act="schw" data-v="1" aria-label="後一週">${ic("chev",18)}</button></span></div><div class="strip">${strip}</div>`+
 `<div class="wf"><label class="df">${ic("cal",18)}<select name="sd"><option value="">選日期</option>${A.map(a=>`<option value="${a.ds}"${a.ds===B.d?" selected":""}>${md(a.d)}</option>`).join("")}</select></label><select name="st" class="tm"><option value="">時間</option>${TIMES.map(t=>`<option value="${t}"${t===B.t?" selected":""}>${t}${tag(t)}</option>`).join("")}</select></div>`+
-`<p class="sm2" style="margin:8px 0">標示（休息日、非開放、不可約、已排課）的時段仍可選擇，排入前會再提醒一次。</p><label>上課地點</label>${placeSel("spl",B.pl||stuPlace(B.sid))}<button class="btn" data-act="schgo">排入課表</button></div>`}
+`<div class="sh" style="margin-top:14px">上課地點</div>${placeSel("spl",B.pl||stuPlace(B.sid))}<button class="btn" data-act="schgo">排入課表</button></div>`}
 function coachBody(){const c=db.coach,sn=sn0,cd=new Date(S.cd);cd.setHours(0,0,0,0);
 const on=day=>db.lessons.filter(l=>sameD(l.start,day)).sort((a,b)=>a.start.localeCompare(b.start));
 const nb=v=>`<button data-act="nav" data-v="${v}" aria-label="${v>0?"下一個":"上一個"}">${ic(v>0?"chev":"left",18)}</button>`;
@@ -255,7 +261,7 @@ let cal;
 if(S.cv==="d"){const L=on(cd),dn=L.filter(l=>l.status==="done").length,now=new Date();let nl=!sameD(cd,now),h="";
 for(const l of L){if(!nl&&new Date(l.start)>now){h+=`<div class="nowl"><b>${hm(now)}</b><i></i><span>接下來</span></div>`;nl=true}
 const d_=l.status==="done",ln=l.len||LEN;
-h+=`<div class="tl"><div class="tt"><b>${hm(l.start)}</b><small>${hm(+new Date(l.start)+ln*6e4)}</small></div><div class="tcd${d_?" dn":""}"><div class="tr"><b>${sn(l.sid)}</b><i class="chipx ${d_?"gy":"gr"}">${d_?"已完課":"已預約"}</i></div><div class="sm2">${ln} 分鐘 · ${esc(l.place||"地點未填")}</div>`+(d_?`<div class="ta" data-id="${l.id}"><button class="ok" data-act="openlog">${ic("note",14)}上課紀錄${hasLog(l)?" ✓":""}</button><button class="cx" data-act="undone">取消完課</button></div>`:S.edit===l.id?`<div data-f data-id="${l.id}">${field("sd","日期","date",ymd(new Date(l.start)))}<label>時間</label>${tsel("st",hm(l.start),0,1410)}<label>地點</label>${placeSel("place",l.place)}<div class="ta"><button class="ok" data-act="saveEdit">儲存</button><button class="md" data-act="cancelEdit">放棄修改</button></div></div>`:`<div class="ta" data-id="${l.id}"><button class="ok" data-act="done">${ic("check",14)}完課</button><button class="md" data-act="edit">修改</button><button class="cx" data-act="cancel">取消</button></div>`)+`</div></div>`}
+h+=`<div class="tl"><div class="tt"><b>${hm(l.start)}</b><small>${hm(+new Date(l.start)+ln*6e4)}</small></div><div class="tcd${d_?" dn":""}"><div class="tr"><b>${sn(l.sid)}</b><i class="chipx ${d_?"gy":"gr"}">${d_?"已完課":"已預約"}</i></div><div class="sm2">${ln} 分鐘 · ${esc(l.place||"地點未填")}</div>`+(d_?`<div class="ta" data-id="${l.id}"><button class="ok" data-act="openlog">${ic("note",14)}上課紀錄${hasLog(l)?" ✓":""}</button><button class="cx" data-act="undone">取消完課</button></div>`:S.edit===l.id?`<div data-f data-id="${l.id}">${field("sd","日期","date",ymd(new Date(l.start)))}<label>時間</label>${tsel("st",hm(l.start),0,1410)}${field("len","上課時長（分鐘）","number",ln,'min="15" max="240" step="5"')}<label>地點</label>${placeSel("place",l.place)}<div class="ta"><button class="ok" data-act="saveEdit">儲存</button><button class="md" data-act="cancelEdit">放棄修改</button></div></div>`:`<div class="ta" data-id="${l.id}"><button class="ok" data-act="done">${ic("check",14)}完課</button><button class="md" data-act="edit">修改</button><button class="cx" data-act="cancel">取消</button></div>`)+`</div></div>`}
 cal=`<div class="nav">${nb(-1)}<div class="ndt"><b>${cd.getMonth()+1} 月 ${cd.getDate()} 日 · 週${WD[cd.getDay()]}</b><small>${cd.getFullYear()}</small></div>${nb(1)}</div><div class="sum"><span>共 ${L.length} 堂 · 已完成 ${dn} · 已預約 ${L.length-dn}</span>${sameD(cd,now)?`<span class="tdy">今天</span>`:`<button class="tdy" data-act="today">移至今天</button>`}</div>${h||`<div class="empty">${cfg().offDates.includes(ymd(cd))||cfg().offWd.includes(cd.getDay())?"休息日":"這天沒有課程"}</div>`}`}
 else if(S.cv==="w"){const w0=new Date(cd);w0.setDate(w0.getDate()-(w0.getDay()+6)%7);let h="";
 for(let i=0;i<7;i++){const d=new Date(w0);d.setDate(w0.getDate()+i);h+=`<div class="wc${sameD(d,new Date())?" td":""}" data-act="goto" data-d="${d.toISOString()}"><b>${WD[d.getDay()]}</b><span class="sm2">${d.getDate()}</span>`+on(d).map(l=>`<div class="chip ${l.status==="done"?"d":"b"}">${hm(l.start)}<br>${sn(l.sid).slice(0,3)}</div>`).join("")+`</div>`}
@@ -267,7 +273,7 @@ cal=`<div class="nav">${nb(-1)}<b>${m0.getFullYear()} 年 ${m0.getMonth()+1} 月
 const seg=[["d","日"],["w","週"],["m","月"]].map(([k,n])=>`<button class="${S.cv===k?"on":""}" data-act="cv" data-v="${k}">${n}</button>`).join("");
 const head=hello(`${esc(c.nick||c.name)}教練，早安！`,"今天也陪學員，進步一點點。",ic("dump",28));
 const pg=t=>brand("教練區")+`<h1 class="pg">${t}</h1>`;
-if(S.tab==="req")return S.sch?schPage():pg("約課申請")+`<button class="btn big" data-act="schopen" style="margin-bottom:12px">${ic("cal",20)}排課</button>`+reqCards();
+if(S.tab==="req")return S.sch?schPage():pg("課程安排")+`<button class="btn big" data-act="schopen" style="margin-bottom:12px">${ic("calp",20)}排課</button>`+reqCards();
 if(S.tab==="stu")return S.stuId&&db.students[S.stuId]?stuPage(S.stuId):pg("我的學員")+stuList();
 if(S.tab==="cfg")return pg("預約設定")+cfgB();
 if(S.tab==="me")return pg("教練資料")+`<div class="card" data-f>${field("name","姓名","text",c.name)}${field("nick","綽號","text",c.nick)}${field("phone","電話","tel",c.phone)}<label>個人經歷（可換行）</label><textarea name="bio" rows="4">${esc(c.bio)}</textarea><label>個人照</label><input name="photo" type="file" accept="image/*"><label class="ck"><input type="checkbox" name="gcal" ${c.gcal?"checked":""}>Google 行事曆連動</label><button class="btn" data-act="saveCoach">儲存</button></div>`;
@@ -337,7 +343,7 @@ if(!confirm(`確認安排「${db.students[r.sid]?.name||""}」上課？\n\n時�
 r.status="confirmed";db.lessons.push({id:rid(),sid:r.sid,start:t,place:d.place,len:LEN,status:"scheduled"})}
 if(a==="rejectReq"){db.requests.find(x=>x.id===f.dataset.rid).status="rejected"}
 if(a==="addLesson"){if(!need("sd","st"))return;db.lessons.push({id:rid(),sid,start:new Date(d.sd+"T"+d.st).toISOString(),place:d.place,status:"scheduled"})}
-if(a==="saveCfg"){if(tm(d.close)-tm(d.open)<LEN)return alert("結束時間至少要比開始時間晚 "+LEN+" 分鐘");Object.assign(db.cfg,{open:d.open,close:d.close,maxDays:Math.max(1,+d.maxDays||30),offWd:[0,1,2,3,4,5,6].filter(w=>d["wd"+w])})}
+if(a==="saveCfg"){if(tm(d.close)-tm(d.open)<LEN)return alert("結束時間至少要比開始時間晚 "+LEN+" 分鐘");Object.assign(db.cfg,{open:d.open,close:d.close,maxDays:Math.max(1,+d.maxDays||30),step:(d.stp60&&!d.stp30)?60:30,offWd:[0,1,2,3,4,5,6].filter(w=>d["wd"+w])})}
 if(a==="addBlock"){if(tm(d.bto)<=tm(d.bfrom))return alert("結束時間需晚於開始時間");db.cfg.blocks=(db.cfg.blocks||[]).concat({id:rid(),wd:d.bwd,from:d.bfrom,to:d.bto})}
 if(a==="delBlock"){db.cfg.blocks=(db.cfg.blocks||[]).filter(x=>x.id!==b.dataset.bid)}
 if(a==="addOff"){if(!need("od"))return;db.cfg.offDates=[...new Set([...(db.cfg.offDates||[]),d.od])].sort()}
@@ -345,14 +351,16 @@ if(a==="delOff"){db.cfg.offDates=(db.cfg.offDates||[]).filter(x=>x!==b.dataset.o
 if(a==="done"){const l=db.lessons.find(x=>x.id===id);if(!confirm(`確認「${db.students[l.sid]?.name||""}」${fmt(l.start)} 這堂課已完課？\n\n完課後會從課程期數扣除 1 堂。`))return;l.status="done"}
 if(a==="undone"){const l=db.lessons.find(x=>x.id===id);if(!confirm(`確定取消「${db.students[l.sid]?.name||""}」${fmt(l.start)} 的完課？\n\n這堂課會回到「已預約」狀態，並重新計入剩餘堂數。`))return;l.status="scheduled"}
 if(a==="cancel"){const l=db.lessons.find(x=>x.id===id);if(!confirm(`確定取消「${db.students[l.sid]?.name||""}」${fmt(l.start)} 的課程？\n\n取消後會從行事曆移除。`))return;db.lessons=db.lessons.filter(x=>x.id!==id)}
-if(a==="saveEdit"){if(!need("sd","st"))return;const l=db.lessons.find(x=>x.id===id),t=new Date(d.sd+"T"+d.st).toISOString(),clash=db.lessons.some(x=>x.id!==id&&x.status==="scheduled"&&Math.abs(new Date(x.start)-new Date(t))<LEN*6e4);
-if(!confirm(`確認修改「${db.students[l.sid]?.name||""}」的課程？\n\n原時間：${fmt(l.start)}\n新時間：${fmt(t)}\n地點：${d.place||"未填"}`+(clash?"\n\n⚠ 這個時段與其他已預約的課程重疊":"")))return;l.start=t;l.place=d.place;S.cd=new Date(t);S.edit=null}
+if(a==="saveEdit"){if(!need("sd","st"))return;const l=db.lessons.find(x=>x.id===id),t=new Date(d.sd+"T"+d.st).toISOString(),ol=l.len||LEN,nl=Math.round(+d.len)||ol;if(!(nl>=15&&nl<=240))return alert("請輸入 15–240 分鐘");
+const clash=db.lessons.some(x=>x.id!==id&&x.status==="scheduled"&&Math.abs(new Date(x.start)-new Date(t))<Math.max(nl,x.len||LEN)*6e4);
+if(!confirm(`確認修改「${db.students[l.sid]?.name||""}」的課程？\n\n原時間：${fmt(l.start)}\n新時間：${fmt(t)}\n時長：${nl===ol?nl+" 分鐘":ol+" → "+nl+" 分鐘"}\n地點：${d.place||"未填"}`+(clash?"\n\n⚠ 這個時段與其他已預約的課程重疊":"")))return;l.start=t;l.len=nl;l.place=d.place;S.cd=new Date(t);S.edit=null}
 if(a==="lenq"){db.cfg.len=+b.dataset.v;syncLen()}
 if(a==="savelen"){const v=Math.round(+d.len);if(!(v>=15&&v<=240))return alert("請輸入 15–240 分鐘");db.cfg.len=v;syncLen()}
 if(a==="addplace"){if(!need("pn"))return;const c0=cfg();db.cfg.places=[...c0.places,{id:rid(),name:d.pn}];if(!c0.defPlace)db.cfg.defPlace=db.cfg.places[0].id}
 if(a==="delplace"){if(!confirm("確定刪除這個場地？"))return;db.cfg.places=cfg().places.filter(x=>x.id!==b.dataset.pid);if(db.cfg.defPlace===b.dataset.pid)db.cfg.defPlace=(db.cfg.places[0]||{}).id||""}
 if(a==="defplace"){db.cfg.defPlace=b.dataset.pid}
-if(a==="addPkg"){const fr=!!d.free;if(!d.total||!d.paid||(!fr&&d.fee===""))return alert("請填寫完整");db.packages.push({id:rid(),sid,term:fr?null:db.packages.filter(p=>p.sid===sid&&!p.free).length+1,free:fr,fee:+d.fee||0,total:+d.total,paid:d.paid,method:d.method})}
+if(a==="addPkg"){if(d.trial&&d.special)return alert("試上課程與特別課程只能擇一");const kd=d.trial?"trial":d.special?"special":"";if(!d.total||!d.paid||(!kd&&d.fee===""))return alert("請填寫完整");db.packages.push({id:rid(),sid,term:kd?null:db.packages.filter(p=>p.sid===sid&&!p.free&&!p.kind).length+1,kind:kd,free:!!kd,fee:+d.fee||0,total:+d.total,paid:d.paid,method:d.method})}
+if(a==="saveStu"){if(!need("name","phone"))return;Object.assign(db.students[sid],{name:d.name,phone:d.phone,gender:d.gender,birthday:d.birthday})}
 if(a==="addNote"){if(!need("text"))return;db.notes.push({id:rid(),sid,text:d.text,ts:Date.now()})}
 if(a==="delNote"){if(!confirm("確定刪除這則備注？"))return;db.notes=db.notes.filter(n=>String(n.id||n.ts)!==b.dataset.nid)}
 commit();
@@ -360,6 +368,8 @@ commit();
 const setD=(i,v)=>{const B=S.bk,f=j=>{B.d[j]=v;if(B.t[j]&&!(v&&slots(v).includes(B.t[j])))B.t[j]=""};if(B.same)[0,1,2].forEach(f);else f(i)};
 document.addEventListener("change",e=>{const t=e.target,B=S.bk,n=t.name||"";
 if(t.dataset&&t.dataset.act==="gcalToggle"){db.students[S.uid].gcal=t.checked;return commit()}
+const EX={stp30:"stp60",stp60:"stp30",trial:"special",special:"trial"};
+if(EX[n]){if(t.checked){const fm0=t.closest("[data-f]"),o=fm0&&fm0.querySelector(`[name=${EX[n]}]`);if(o)o.checked=false}return}
 if(n==="sp"){db.students[t.dataset.sid].place=t.value;return commit()}
 if(S.sch&&/^(ssid|sd|st|spl)$/.test(n)){const C=S.sch;if(n==="ssid"){C.sid=t.value;C.pl=t.value?stuPlace(t.value):""}else if(n==="sd")C.d=t.value;else if(n==="st")C.t=t.value;else C.pl=t.value;return render()}
 if(!B)return;
